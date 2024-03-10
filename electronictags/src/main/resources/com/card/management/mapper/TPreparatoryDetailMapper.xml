@@ -13,6 +13,16 @@
     <result column="card_binding_number" jdbcType="VARCHAR" property="cardBindingNumber" />
     <result column="check_result" jdbcType="VARCHAR" property="checkResult" />
   </resultMap>
+  <select id="selectPreparatoryDetailCount" parameterType="String" resultType="java.lang.Long">
+    select
+		count(*)
+    from t_preparatory_detail as detail inner join m_batch_number as  batch on detail.batch_number = batch.batch_number
+    <where>
+        <if test="batchNumber != null">
+            detail.batch_number =  #{batchNumber}
+        </if>
+    </where>
+  </select>
   <select id="selectPreparatoryDetailBybatchNumber" parameterType="String" resultMap="PreparatoryDetailResultMap">
     select
 		batch.batch_number,
@@ -25,7 +35,7 @@
     from t_preparatory_detail as detail inner join m_batch_number as  batch on detail.batch_number = batch.batch_number
     <where>
         <if test="batchNumber != null">
-            batch_number =  #{batchNumber}
+            detail.batch_number =  #{batchNumber}
         </if>
     </where>
   </select>

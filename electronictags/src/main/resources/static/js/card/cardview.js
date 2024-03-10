@@ -173,6 +173,8 @@ $(function() {
 			$("#errorInfo").removeClass( "d-none" )
 			$("#errorInfo").text("请输入批量号!")
 			$("#batchNumber").focus();
+			$("#errorFormMsg").remove();
+			$("#infoFormMsg").remove();
 		} else {
 			getCardInfo();
 		}
@@ -224,6 +226,8 @@ $(function() {
 						$("#batchNumber").focus();
 						$("#errorInfo").removeClass( "d-none" )
 						$("#errorInfo").text("要处理的批量号不存在！请确认!")
+						$("#errorFormMsg" ).remove();
+						$("#infoFormMsg").remove();
 					}
 				},
 				error: function(e) {
@@ -259,6 +263,7 @@ function checkItem() {
 		event.preventDefault();
 		$("#carderrorInfo").removeClass( "d-none" )
 		$("#carderrorInfo").text("有重复信息，请确认!")
+		return;
 	}
 	$("#card_form").submit();
 }

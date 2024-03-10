@@ -3,6 +3,7 @@
  */
 package com.card.management.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,13 @@ import com.card.management.entity.PreparatoryDetailEntity;
 import com.card.management.entity.TLoGradeHistory;
 import com.card.management.entity.TLoGradeHistoryExample;
 import com.card.management.entity.TPreparatoryDetail;
+import com.card.management.entity.TWarningMessage;
+import com.card.management.entity.TWarningMessageExample;
 import com.card.management.mapper.MBatchNumberMapper;
 import com.card.management.mapper.TAssembleDetailMapper;
 import com.card.management.mapper.TLoGradeHistoryMapper;
 import com.card.management.mapper.TPreparatoryDetailMapper;
+import com.card.management.mapper.TWarningMessageMapper;
 
 /**
  * @author slm
@@ -40,6 +44,10 @@ public class CardInfoManagementServiceImpl implements CardInfoManagementService 
 
 	@Autowired
 	private TLoGradeHistoryMapper tLoGradeHistoryMapper;
+	
+	@Autowired
+	private TWarningMessageMapper tWarningMessageMapper;
+
 
 	@Override
 	public MBatchNumber getCards(String batchNumber) {
@@ -111,5 +119,15 @@ public class CardInfoManagementServiceImpl implements CardInfoManagementService 
 			List<TPreparatoryDetail> preparatoryDetailEntityList) {
 		long result = tPreparatoryDetailMapper.insertPreparatory(preparatoryDetailEntityList);
 		return result;
+	}
+
+	@Override
+	public List<TWarningMessage> getWaringMessage() {
+		TWarningMessageExample example = new TWarningMessageExample();
+		List<TWarningMessage> tmList = this.tWarningMessageMapper.selectByExample(example);
+		if (CollectionUtils.isEmpty(tmList)) {
+			return new ArrayList<TWarningMessage>();
+		}
+		return tmList;
 	}
 }

@@ -6,23 +6,29 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link th:href="@{../css/bootstrap/bootstrap.min.css}" rel="stylesheet" />
-	<link th:href="@{../css/bootstrap/card.css}" rel="stylesheet" />
+	<link th:href="@{../css/card.css}" rel="stylesheet" />
 	<script src="../js/bootstrap/jquery-3.7.1.min.js"></script>
-	<script src="../js/bootstrap/1.11.0/popper.min.js"></script>
+	<script src="../js/1.11.0/popper.min.js"></script>
 	<script src="../js/bootstrap/bootstrap.min.js"></script>
 	<script src="../js/card/cardview.js"></script>
-
 
 </head>
 
 <body>
-	<div class="container">
-		<h1 class="my-1 text-center">筹备电子卡片生成页面</h1>
-		<hr class="mb-4">
-		<form class="form-group" action="#" th:action="@{/createCardInfo}" th:object="${cardView}" method="post" id="card_form">
-			<div class="alert alert-primary text-center" role="alert" th:if="${cardView.infoMessage}" th:text="${cardView.infoMessage}"/>
-			<div class="alert alert-danger text-center" role="alert" th:if="${#fields.hasErrors('batchNumber')}" th:errors="*{batchNumber}"></div>
-			<div class="w-100 d-none alert alert-danger text-center " role="alert" id="errorInfo"></div>
+	<div class="container bg-info ">
+		<div class="w-100 p-2 mb-2">
+			<h1 class="my-3 text-center text-white">筹备电子卡片生成页面</h1>
+			<hr class="mb-2">
+		</div>
+		<form class="form-group" action="#" th:action="@{/createCardInfo}" th:object="${cardView}" method="post"
+			id="card_form">
+			<div class="alert alert-primary text-center" role="alert" th:if="${cardView.infoMessage}"
+				th:text="${cardView.infoMessage}" id="infoFormMsg" />
+			<div style="color: rgb(255, 128, 128);" th:if="${#fields.hasAnyErrors()}" id="errorFormMsg">
+				<ul>
+					<li th:each="err : ${#fields.allErrors()}" th:text="${err}" />
+				</ul>
+			</div>
 			<div class="form-row align-items-center">
 				<label for="batchNumber" class="col-1 col-form-label">批量号</label>
 				<div class="col-7">
@@ -34,7 +40,7 @@
 				</div>
 			</div>
 			<div class="form-row my-2">
-				<div  class="col-1"></div>
+				<div class="col-1"></div>
 				<div class=" col-7 d-none alert alert-danger text-center" role="alert" id="errorInfo"></div>
 			</div>
 			<div class="form-row align-items-center">
@@ -62,17 +68,19 @@
 			<div class="form-row align-items-center">
 				<label for="writeDate" class="col-1 col-form-label">日期</label>
 				<div class="col-7">
-					<input type="text" id="writeDate" readonly class="form-control-plaintext" th:field="*{writeDate}" />
+					<input type="text" id="writeDate" readonly class="form-control-plaintext" th:field="*{writeDate}"
+					 />
 				</div>
 			</div>
 
-
+			<hr class="mb-1">
 			<div class="form-group">
-				<h2 class="my-3 text-center">电子卡片信息</h2>
-				<hr class="mb-4">
+				<div class="w-100 badge badge-primary justify-content-center my-3 text-center">
+					<h4>电子卡片信息</h4>
+				</div>
 				<div class="w-100 d-none alert alert-danger text-center " role="alert" id="carderrorInfo"></div>
-				<div id="card1" class="form-row align-items-center mb-3" >
-					<div class="col-1"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_1"
+				<div id="card1" class="form-row align-items-center mb-3">
+					<div class="col-1"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_1"
 							onclick="clearValue('1')" /></div>
 					<div class="col-4">
 						<input id="cardInfo1" type="text" class="form-control" th:field="*{cardInfoList[0].cardInfo}"
@@ -80,7 +88,7 @@
 					</div>
 					<div class="col-1"><input id="cardcount1" type="text" readonly class="form-control-plaintext"
 							th:field="*{cardInfoList[0].cardCount}" /></div>
-					<div class="col-1"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_2"
+					<div class="col-1"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_2"
 							onclick="clearValue('2')" /></div>
 					<div class="col-4"><input id="cardInfo2" type="text" class="form-control"
 							th:field="*{cardInfoList[1].cardInfo}" placeholder="请输入扫码输入..." />
@@ -89,14 +97,14 @@
 							th:field="*{cardInfoList[1].cardCount}" /></div>
 				</div>
 				<div id="card2" class="form-row align-items-center mb-3">
-					<div class="col-1"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_3"
+					<div class="col-1"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_3"
 							onclick="clearValue('3')" /></div>
 					<div class="col-4"><input id="cardInfo3" type="text" class="form-control"
 							th:field="*{cardInfoList[2].cardInfo}" placeholder="请输入扫码输入..." />
 					</div>
 					<div class="col-1"><input id="cardcount3" type="text" readonly class="form-control-plaintext"
 							th:field="*{cardInfoList[2].cardCount}" /></div>
-					<div class="col-1"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_4"
+					<div class="col-1"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_4"
 							onclick="clearValue('4')" /></div>
 					<div class="col-4"><input id="cardInfo4" type="text" class="form-control"
 							th:field="*{cardInfoList[3].cardInfo}" placeholder="请输入扫码输入..." />
@@ -105,14 +113,14 @@
 							th:field="*{cardInfoList[3].cardCount}" /></div>
 				</div>
 				<div id="card3" class="form-row align-items-center mb-3">
-					<div class="col-1"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_5"
+					<div class="col-1"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_5"
 							onclick="clearValue('5')" /></div>
 					<div class="col-4"><input id="cardInfo5" type="text" class="form-control"
 							th:field="*{cardInfoList[4].cardInfo}" placeholder="请输入扫码输入..." />
 					</div>
 					<div class="col-1"><input id="cardcount5" type="text" readonly class="form-control-plaintext"
 							th:field="*{cardInfoList[4].cardCount}" /></div>
-					<div class="col-1"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_6"
+					<div class="col-1"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_6"
 							onclick="clearValue('6')" /></div>
 					<div class="col-4"><input id="cardInfo6" type="text" class="form-control"
 							th:field="*{cardInfoList[5].cardInfo}" placeholder="请输入扫码输入..." /></div>
@@ -120,14 +128,14 @@
 							th:field="*{cardInfoList[5].cardCount}" /></div>
 				</div>
 				<div id="card4" class="form-row align-items-center mb-3">
-					<div class="col-1"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_7"
+					<div class="col-1"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_7"
 							onclick="clearValue('7')" /></div>
 					<div class="col-4"><input id="cardInfo7" type="text" class="form-control"
 							th:field="*{cardInfoList[6].cardInfo}" placeholder="请输入扫码输入..." />
 					</div>
 					<div class="col-1"><input id="cardcount7" type="text" readonly class="form-control-plaintext"
 							th:field="*{cardInfoList[6].cardCount}" /></div>
-					<div class="col-1"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_8"
+					<div class="col-1"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_8"
 							onclick="clearValue('8')" /></div>
 					<div class="col-4"><input id="cardInfo8" type="text" class="form-control"
 							th:field="*{cardInfoList[7].cardInfo}" placeholder="请输入扫码输入..." />
@@ -136,15 +144,15 @@
 							th:field="*{cardInfoList[7].cardCount}" /></div>
 				</div>
 				<div id="card5" class="form-row align-items-center mb-3">
-					<div class="col-1"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_9"
+					<div class="col-1"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_9"
 							onclick="clearValue('9')" /></div>
 					<div class="col-4"><input id="cardInfo9" type="text" class="form-control"
 							th:field="*{cardInfoList[8].cardInfo}" placeholder="请输入扫码输入..." />
 					</div>
 					<div class="col-1"><input id="cardcount9" type="text" readonly class="form-control-plaintext"
 							th:field="*{cardInfoList[8].cardCount}" /></div>
-					<div class="col-1"><input type="button" class="btn btn-outline-info btn-sm " value="清空"
-							id="clear_10" onclick="clearValue('10')" /></div>
+					<div class="col-1"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_10"
+							onclick="clearValue('10')" /></div>
 					<div class="col-4"><input id="cardInfo10" type="text" class="form-control"
 							th:field="*{cardInfoList[9].cardInfo}" placeholder="请输入扫码输入..." />
 					</div>
@@ -152,11 +160,52 @@
 							th:field="*{cardInfoList[9].cardCount}" /></div>
 				</div>
 			</div>
-			<div class="w-100 text-center mt-5">
+			<div th:if="${cardView.warningMessageList != null and !cardView.warningMessageList.isEmpty()}" class="text-center">
+				<hr class="mb-2">
+				<a  role="button" class="btn btn-outline-warning btn-block" data-toggle="modal" data-target="#staticBackdrop">有异常的批量号信息!</a>
+				<hr class="mb-2">
+			</div>
+			<div class="w-100 text-center p-2">
 				<input type="submit" class="btn btn-primary btn-lg" value="写入" onclick="checkItem()" id="card_form" />
 				<a class="btn btn-primary mx-2 btn-lg" th:href="@{/login}" role="button">返回</a>
 			</div>
 		</form>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade " id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
+		aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="staticBackdropLabel">批量号信息异常</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" th:object="${cardView}">
+					<table class="table table-bordered">
+						<thead>
+							<tr>
+								<th scope="col ">批量号</th>
+								<th scope="col text-center">日期</th>
+								<th scope="col">警告信息</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="message : ${cardView.warningMessageList}">
+								<td th:text="${message.batchNumber}"></td>
+								<td th:text="${message.writeDate}"></td>
+								<td th:text="${message.warningMessage}"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 

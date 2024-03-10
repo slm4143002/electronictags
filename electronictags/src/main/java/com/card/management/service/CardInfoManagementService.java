@@ -10,6 +10,7 @@ import com.card.management.entity.MBatchNumber;
 import com.card.management.entity.PreparatoryDetailEntity;
 import com.card.management.entity.TLoGradeHistory;
 import com.card.management.entity.TPreparatoryDetail;
+import com.card.management.entity.TWarningMessage;
 
 /**
  * @author slm
@@ -38,5 +39,8 @@ public interface CardInfoManagementService {
 	// 登录批量信息和筹备明细信息
 	public long createBatchNumberPreparatoryDetail(
 			List<TPreparatoryDetail> preparatoryDetailEntityList);
+	
+	// 取得警告信息
+	public List<TWarningMessage> getWaringMessage();
 
 }

@@ -19,17 +19,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.thymeleaf.util.StringUtils;
 
 import com.card.management.entity.AssembleDetailEntity;
 import com.card.management.entity.MBatchNumber;
 import com.card.management.entity.PreparatoryDetailEntity;
 import com.card.management.entity.TLoGradeHistory;
 import com.card.management.entity.TPreparatoryDetail;
+import com.card.management.entity.TWarningMessage;
 import com.card.management.service.CardInfoManagementService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -57,11 +59,6 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 	public String getCards() {
 		return "navigation";
 	}
-
-	@GetMapping("/gotoCrdview")
-	public String showForm(CardView cardView) {
-		return "cardview";
-	}
 	
 	/**
 	 * 跳转到筹备电子卡片登录画面
@@ -70,8 +67,12 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 	 * @param model
 	 * @return
 	 */
-	@GetMapping("/gotoCrdview1")
-	public String creadCard(CardView cardView) {
+	@GetMapping("/gotoCardview")
+	public String creadCard(CardView cardView,Model model) {
+		List<TWarningMessage> wmList = service.getWaringMessage();
+		CardView card = new CardView();
+		card.setWarningMessageList(wmList);
+		model.addAttribute("cardView", card);
 		return "cardview";
 	}
 
@@ -96,15 +97,21 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 	 * @return
 	 */
 	@PostMapping("/searchCardInfo")
-	public ResponseEntity<Object> searchCardInfo(@Valid @ModelAttribute("cardview") CardView cardview,
+	public ResponseEntity<Object> searchCardInfo(@Valid CardView cardview,
 			BindingResult result,
 			Model model) {
 		MBatchNumber batchNumber = service.getCards(cardview.getBatchNumber());
 		if (batchNumber == null) {
 			return new ResponseEntity<Object>(HttpStatus.NO_CONTENT);
 		}
-
-		return new ResponseEntity<Object>(batchNumber, HttpStatus.OK);
+		CardView card = new CardView();
+		card.setBatchNumber(batchNumber.getBatchNumber());
+		card.setCarCount(StringUtils.toString(batchNumber.getCarCount()));
+		card.setMachineCategoryName(batchNumber.getMachineCategoryName());
+		card.setMachineCount(StringUtils.toString(batchNumber.getMachineCount()));
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		card.setWriteDate(formatter.format(batchNumber.getWriteDate()));
+		return new ResponseEntity<Object>(card, HttpStatus.OK);
 	}
 
 	/** 
@@ -113,20 +120,24 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 	 *
 	 */
 	@PostMapping("/createCardInfo")
-	public String createCardInfo(@Valid CardView cardview,BindingResult bindingResult,Model model) {
+	public String createCardInfo(@Valid CardView cardView,BindingResult bindingResult,Model model) {
 		try {
-		
 			if (bindingResult.hasErrors()) {
-				model.addAttribute("cardview", cardview);
 				return "cardview";
 			}
-			
+			long detailcount = service.getPreparatoryDetailCount(cardView.getBatchNumber());
+			if (detailcount>0) {
+				String batchNumberInsertMessage = messageSource.getMessage("batchNumberInsertMessage", new String[]{cardView.getBatchNumber()}, Locale.CHINA);
+				ObjectError error = new ObjectError("batchNumber",batchNumberInsertMessage);
+				bindingResult.addError(error);
+				return "cardview";
+			}
 			// 日期
 			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-			Date writeDate = formatter.parse(cardview.getWriteDate());
+			Date writeDate = formatter.parse(cardView.getWriteDate());
 
 			// 筹备信息取得
-			List<CardInfo> cardInfo = cardview.getCardInfoList();
+			List<CardInfo> cardInfo = cardView.getCardInfoList();
 			List<TPreparatoryDetail> preparatoryDetailInfoList = new ArrayList<>();
 			cardInfo.forEach(card -> {
 				TPreparatoryDetail entity = new TPreparatoryDetail();
@@ -135,7 +146,7 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 				// 车数
 				entity.setCarTimes(Integer.parseInt(parseCarCount(card.getCardCount())));
 				// 批量号
-				entity.setBatchNumber(cardview.getBatchNumber());
+				entity.setBatchNumber(cardView.getBatchNumber());
 				entity.setCheckResult("1");
 				entity.setWriteDate(writeDate);
 				preparatoryDetailInfoList.add(entity);
@@ -143,13 +154,13 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 
 			service.createBatchNumberPreparatoryDetail(preparatoryDetailInfoList);
 		} catch (Exception e) {
-			model.addAttribute("cardview", cardview);
+			e.printStackTrace();
 			return "cardview";
 		}
 		CardView card = new CardView();
-		String infoMessage = messageSource.getMessage("cardInfoFinshied", new String[]{cardview.getBatchNumber()}, Locale.CHINA);
+		String infoMessage = messageSource.getMessage("cardInfoFinshied", new String[]{cardView.getBatchNumber()}, Locale.CHINA);
 		card.setInfoMessage(infoMessage);
-		model.addAttribute("cardview", card);
+		model.addAttribute("cardView", card);
 
 		return "cardview";
 	}
@@ -160,7 +171,12 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 	 * @return
 	 */
 	private String parseCarCount(String card) {
-		String[] cardArray = card.split("/");
+		String[] cardArray=new String[2];
+		try {
+			cardArray = card.split("/");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		return cardArray[0];
 	}
 

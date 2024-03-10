@@ -8,90 +8,92 @@
 	<link th:href="@{../css/bootstrap/bootstrap.min.css}" rel="stylesheet" />
 	<link th:href="@{../css/card.css}" rel="stylesheet" />
 	<script src="../js/bootstrap/jquery-3.7.1.min.js"></script>
-	<script src="../js/bootstrap/1.11.0/popper.min.js"></script>
+	<script src="../js/1.11.0/popper.min.js"></script>
 	<script src="../js/bootstrap/bootstrap.min.js"></script>
 	<script src="../js/card/clearcard.js"></script>
 
 <style>
-.note {
-  margin: 0 auto;
-}
+	a {
+	  color: rgb(255, 255, 255);
+	}
 </style>
 </head>
 
 <body>
-	<div class="container">
-		<h1 class="my-2 text-center">电子卡片清空页</h1>
-		<hr class="mb-4">
+	<div class="container bg-info text-white" >
+		<div class="w-100 p-2">
+			<h1 class="my-3 text-center" >电子卡片清空页</h1>
+			<hr class="mb-2">
+		</div>
+		<div><a th:href="@{/login}"><<返回</a>
 		<form class="form-group" action="#" th:action="@{/createCardInfo}" th:object="${cardview}" method="post"
 			id="card_form">
 			<div class="form-group ">
 				<div class="w-100 badge badge-primary justify-content-center my-4"><h2>电子卡片信息</h2></div>
 				<div class="w-100 d-none alert alert-danger text-center " role="alert" id="errorInfo"></div>
 				<div id="card1" class="form-row mb-4 align-items-center" >
-					<div class="col "><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_1"
+					<div class="col "><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_1"
 							onclick="clearValue('1')" /></div>
 					<div class="col-5">
 						<input id="cardInfo1" type="text" class="form-control" th:field="*{cardInfoList[0].cardInfo}"
 							placeholder="请输入扫码输入..." />
 					</div>
-					<div class="col ml-4"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_2"
+					<div class="col ml-4"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_2"
 							onclick="clearValue('2')" /></div>
 					<div class="col-5"><input id="cardInfo2" type="text" class="form-control"
 							th:field="*{cardInfoList[1].cardInfo}" placeholder="请输入扫码输入..." />
 					</div>
 				</div>
 				<div id="card2" class="form-row mb-4 align-items-center">
-					<div class="col"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_3"
+					<div class="col"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_3"
 							onclick="clearValue('3')" /></div>
 					<div class="col-5"><input id="cardInfo3" type="text" class="form-control"
 							th:field="*{cardInfoList[2].cardInfo}" placeholder="请输入扫码输入..." />
 					</div>
-					<div class="col ml-4"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_4"
+					<div class="col ml-4"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_4"
 							onclick="clearValue('4')" /></div>
 					<div class="col-5"><input id="cardInfo4" type="text" class="form-control"
 							th:field="*{cardInfoList[3].cardInfo}" placeholder="请输入扫码输入..." />
 					</div>
 				</div>
 				<div id="card3" class="form-row mb-4 align-items-center">
-					<div class="col"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_5"
+					<div class="col"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_5"
 							onclick="clearValue('5')" /></div>
 					<div class="col-5"><input id="cardInfo5" type="text" class="form-control"
 							th:field="*{cardInfoList[4].cardInfo}" placeholder="请输入扫码输入..." />
 					</div>
-					<div class="col ml-4"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_6"
+					<div class="col ml-4"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_6"
 							onclick="clearValue('6')" /></div>
 					<div class="col-5"><input id="cardInfo6" type="text" class="form-control"
 							th:field="*{cardInfoList[5].cardInfo}" placeholder="请输入扫码输入..." /></div>
 				</div>
 				<div id="card4" class="form-row mb-4 align-items-center">
-					<div class="col"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_7"
+					<div class="col"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_7"
 							onclick="clearValue('7')" /></div>
 					<div class="col-5"><input id="cardInfo7" type="text" class="form-control"
 							th:field="*{cardInfoList[6].cardInfo}" placeholder="请输入扫码输入..." />
 					</div>
-					<div class="col ml-4"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_8"
+					<div class="col ml-4"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_8"
 							onclick="clearValue('8')" /></div>
 					<div class="col-5"><input id="cardInfo8" type="text" class="form-control"
 							th:field="*{cardInfoList[7].cardInfo}" placeholder="请输入扫码输入..." />
 					</div>
 				</div>
 				<div id="card5" class="form-row mb-4 align-items-center">
-					<div class="col align-items-center"><input type="button" class="btn btn-outline-info btn-sm " value="清空" id="clear_9"
+					<div class="col align-items-center"><input type="button" class="btn btn-secondary btn-sm " value="清空" id="clear_9"
 							onclick="clearValue('9')" /></div>
 					<div class="col-5"><input id="cardInfo9" type="text" class="form-control"
 							th:field="*{cardInfoList[8].cardInfo}" placeholder="请输入扫码输入..." />
 					</div>
-					<div class="col ml-4"><input type="button" class="btn btn-outline-info btn-sm " value="清空"
+					<div class="col ml-4"><input type="button" class="btn btn-secondary btn-sm " value="清空"
 							id="clear_10" onclick="clearValue('10')" /></div>
 					<div class="col-5"><input id="cardInfo10" type="text" class="form-control"
 							th:field="*{cardInfoList[9].cardInfo}" placeholder="请输入扫码输入..." />
 					</div>
 				</div>
 			</div>
-			<div class="w-100 text-center ">
-				<a class="btn btn-primary mx-2 btn-lg" th:href="@{/login}" role="button">返回</a>
-				<a class="btn btn-primary mx-2 btn-lg" th:href="@{/login}" role="button" onclick="checkItem()">清除</a>
+			<div class="w-100 text-center p-5">
+				<a class="btn btn-primary btn-lg mx-2" th:href="@{/login}" role="button" onclick="checkItem()">清除</a>
 			</div>
 		</form>
 	</div>

@@ -2,8 +2,12 @@ package com.card.management.control;
 
 import java.util.List;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.card.management.entity.TWarningMessage;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,19 +15,20 @@ import lombok.Setter;
 @Getter @Setter @NoArgsConstructor
 public class CardView {
 
-	@NotNull
-	@Size(min=10, max=30)
+	@NotBlank(message = "{batchNumber.notBlank}")
 	private String batchNumber;
-	@NotNull
+	@NotBlank(message = "{machineCategoryName.notBlank}")
 	private String machineCategoryName;
-	@NotNull
+	@NotBlank(message = "{machineCount.notBlank}")
 	private String machineCount;
-	@NotNull
+	@NotBlank(message = "{carCount.notBlank}")
 	private String carCount;
-	@NotNull
+	@NotBlank(message = "{writeDate.notBlank}")
+	@DateTimeFormat (pattern="yyyy-mm-dd")
 	private String writeDate;
-	@NotNull
+	@NotEmpty(message = "{cardInfoList.notempty}")
 	private List<CardInfo>  cardInfoList;
+	private List<TWarningMessage>  warningMessageList;
 	private String infoMessage;
 
 }

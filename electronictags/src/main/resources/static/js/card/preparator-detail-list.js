@@ -2,7 +2,7 @@ $(function() {
 	initTable();
 	function initTable() {
 		$('#dataTable').bootstrapTable('destroy').bootstrapTable({
-			height: 550,
+			height: 650,
 			sortable: true, // 是否启用排序
 			sortOrder: "asc",
 			columns: [
