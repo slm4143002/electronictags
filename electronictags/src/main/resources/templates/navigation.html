@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<head>
+	<title>电子小票系统</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link th:href="@{../css/bootstrap/bootstrap.min.css}" rel="stylesheet" />
+	<link th:href="@{../css/card.css}" rel="stylesheet" />
+</head>
+
+<body class="bg-primary">
+	<div class="container">
+
+		<h1 class="my-3 text-center text-white">电子小票系统</h1>
+		<hr class="mb-5">
+		<div class="row p-3 mb-2">
+			<div class="col-6"><a th:href="@{/gotoCrdview}"
+					class="btn btn-success border border-dark rounded-pill btn-lg text-white btn-block">筹备电子卡片</a></div>
+			<div class="col-6"><a th:href="@{/preparatoryDetail}"
+					class="btn btn-success border border-dark rounded-pill btn-lg text-white btn-block">筹备数据库明细一览</a>
+			</div>
+		</div>
+		<div class="row p-3 mb-2 ">
+			<div class="col-6"><a th:href="@{/gotoClearCardView}"
+					class="btn btn-success border border-dark rounded-pill btn-lg text-white btn-block">电子卡片清除页面</a>
+			</div>
+			<div class="col-6"><a th:href="@{/assembleDetail}"
+					class="btn btn-success border border-dark rounded-pill btn-lg text-white btn-block">组装数据库明细一览</a>
+			</div>
+		</div>
+		<div class="row p-3 mb-2 ">
+			<div class="col-6"><a th:href="@{/loGradeHistory}"
+					class="btn btn-success border border-dark rounded-pill btn-lg text-white btn-block">L/O品履历一览</a>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

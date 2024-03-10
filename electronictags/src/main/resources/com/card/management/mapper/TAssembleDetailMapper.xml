@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.card.management.mapper.TAssembleDetailMapper">
+
+	<!-- 以下是手写部分 -->
+
+	<resultMap id="AssembleDetailResultMap"
+		type="com.card.management.entity.AssembleDetailEntity">
+		<result column="batch_number" jdbcType="VARCHAR"
+			property="batchNumber" />
+		<result column="machine_category_name" jdbcType="VARCHAR"
+			property="machineCategoryName" />
+		<result column="write_date" jdbcType="VARCHAR"
+			property="writeDate" />
+		<result column="assemble_result" jdbcType="VARCHAR"
+			property="assembleResult" />
+		<result column="ground_connection_result" jdbcType="VARCHAR"
+			property="groundConnectionResult" />
+		<result column="withstand_voltage_result" jdbcType="VARCHAR"
+			property="withstandVoltageResult" />
+		<result column="ut_result" jdbcType="VARCHAR"
+			property="utResult" />
+		<result column="machine_count" jdbcType="TINYINT"
+			property="machineCount" />
+		<result column="card_binding_number" jdbcType="VARCHAR"
+			property="cardBindingNumber" />
+		<result column="check_result" jdbcType="VARCHAR"
+			property="checkResult" />
+		<result column="ticket_info" jdbcType="VARCHAR"
+			property="ticketInfo" />
+	</resultMap>
+	<select id="selectAssembleDetailBybatchNumber"
+		parameterType="String" resultMap="AssembleDetailResultMap">
+		select
+		    batch.batch_number
+		    , batch.machine_category_name
+		    , batch.machine_count
+		    , cast(detail.write_date as char) AS write_date
+		    , detail.card_binding_number
+		    , detail.ticket_info
+		    , case when detail.assemble_result then '完成' else '' end as assemble_result
+		    , case when detail.ground_connection_result then '完成' else '' end as ground_connection_result
+		    , case when detail.withstand_voltage_result then '完成' else '' end as withstand_voltage_result
+		    , case when detail.ut_result then '完成' else '' end as ut_result
+		    , case when detail.piece_times then '完成' else '' end as piece_times
+		    , case 
+		        when check_result 
+		            then '完成' 
+		        else '未完成' 
+		        end as check_result 
+		from
+		    t_assemble_detail as detail 
+		    inner join m_batch_number as batch 
+		        on detail.batch_number = batch.batch_number 
+		        and batch.write_date = detail.write_date 
+		    inner join t_batch_process_result_confirm as process_result 
+		        on detail.batch_number = process_result.batch_number 
+		        and detail.write_date = process_result.write_date 
+		        and detail.card_binding_number = process_result.card_binding_number
+
+		<where>
+			<if test="batchNumber != null">
+				batch_number = #{batchNumber}
+			</if>
+		</where>
+	</select>
+
+</mapper>

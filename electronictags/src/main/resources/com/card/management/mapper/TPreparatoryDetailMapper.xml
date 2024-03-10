@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.card.management.mapper.TPreparatoryDetailMapper">
+  
+<!--  以下是手写部分  -->
+  
+  <resultMap id="PreparatoryDetailResultMap" type="com.card.management.entity.PreparatoryDetailEntity">
+    <result column="batch_number" jdbcType="VARCHAR" property="batchNumber" />
+    <result column="machine_category_name" jdbcType="VARCHAR" property="machineCategoryName" />
+    <result column="write_date" jdbcType="DATE" property="writeDate" />
+    <result column="machine_count" jdbcType="TINYINT" property="machineCount" />
+    <result column="car_times" jdbcType="TINYINT" property="carCount" />
+    <result column="card_binding_number" jdbcType="VARCHAR" property="cardBindingNumber" />
+    <result column="check_result" jdbcType="VARCHAR" property="checkResult" />
+  </resultMap>
+  <select id="selectPreparatoryDetailBybatchNumber" parameterType="String" resultMap="PreparatoryDetailResultMap">
+    select
+		batch.batch_number,
+		batch.machine_category_name,
+		batch.machine_count,
+		detail.write_date, 
+		detail.car_times, 
+		detail.card_binding_number,
+		case when detail.check_result then '完成' else '未完成' end as check_result
+    from t_preparatory_detail as detail inner join m_batch_number as  batch on detail.batch_number = batch.batch_number
+    <where>
+        <if test="batchNumber != null">
+            batch_number =  #{batchNumber}
+        </if>
+    </where>
+  </select>
+  
+  <insert id="insertPreparatory" parameterType="java.util.List">
+	    insert into t_preparatory_detail
+	    (   
+	        batch_number,
+	        write_date,
+	        car_times,
+	        card_binding_number,
+	        check_result,
+	        update_date,
+	        create_date
+	    )
+	    values
+	    <foreach collection="list" item="item" index= "index" separator =",">
+	    (
+	        #{item.batchNumber},
+	        #{item.writeDate},
+	        #{item.carTimes},
+	        #{item.cardBindingNumber},
+	        #{item.checkResult},
+	        now(),
+	        now()
+	    )
+	    </foreach>
+   </insert>
+</mapper>
