@@ -1,4 +1,4 @@
-package com.card.management.control;
+package com.card.management.restapi.pojo;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

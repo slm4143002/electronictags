@@ -68,8 +68,7 @@
 			<div class="form-row align-items-center">
 				<label for="writeDate" class="col-1 col-form-label">日期</label>
 				<div class="col-7">
-					<input type="text" id="writeDate" readonly class="form-control-plaintext" th:field="*{writeDate}"
-					 />
+					<input type="text" id="writeDate" readonly class="form-control-plaintext" th:field="*{writeDate}" />
 				</div>
 			</div>
 
@@ -160,9 +159,11 @@
 							th:field="*{cardInfoList[9].cardCount}" /></div>
 				</div>
 			</div>
-			<div th:if="${cardView.warningMessageList != null and !cardView.warningMessageList.isEmpty()}" class="text-center">
+			<div th:if="${cardView.warningMessageList != null and !cardView.warningMessageList.isEmpty()}"
+				class="text-center">
 				<hr class="mb-2">
-				<a  role="button" class="btn btn-outline-warning btn-block" data-toggle="modal" data-target="#staticBackdrop">有异常的批量号信息!</a>
+				<a role="button" class="btn btn-outline-warning btn-block" data-toggle="modal"
+					data-target="#staticBackdrop">有异常的批量号信息!</a>
 				<hr class="mb-2">
 			</div>
 			<div class="w-100 text-center p-2">
@@ -170,6 +171,15 @@
 				<a class="btn btn-primary mx-2 btn-lg" th:href="@{/login}" role="button">返回</a>
 			</div>
 		</form>
+	</div>
+
+	<div class="modal fade" id="loadingModal">
+		<div
+			style="width: 200px;height:20px; z-index: 20000; position: absolute; text-align: center; left: 50%; top: 50%;margin-left:-100px;margin-top:-10px">
+			<div class="spinner-border" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
 	</div>
 
 	<!-- Modal -->
@@ -190,13 +200,15 @@
 								<th scope="col ">批量号</th>
 								<th scope="col text-center">日期</th>
 								<th scope="col">警告信息</th>
+								<th scope="col">登录时间</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr th:each="message : ${cardView.warningMessageList}">
 								<td th:text="${message.batchNumber}"></td>
-								<td th:text="${message.writeDate}"></td>
+								<td th:text="${#dates.format(message.writeDate,'yyyy-MM-dd')}"></td>
 								<td th:text="${message.warningMessage}"></td>
+								<td th:text="${#dates.format(message.createDate,'yyyy-MM-dd hh:mm:ss')}"></td>
 							</tr>
 						</tbody>
 					</table>
