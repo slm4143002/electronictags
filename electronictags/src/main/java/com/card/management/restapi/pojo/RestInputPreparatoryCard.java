@@ -1,10 +1,6 @@
-package com.card.management.control;
+package com.card.management.restapi.pojo;
 
 import java.util.List;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.card.management.entity.TWarningMessage;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter @Setter @NoArgsConstructor
-public class CardView {
+public class RestInputPreparatoryCard {
 
 	@NotBlank(message = "{batchNumber.notBlank}")
 	private String batchNumber;
@@ -23,11 +19,8 @@ public class CardView {
 	@NotBlank(message = "{carCount.notBlank}")
 	private String carCount;
 	@NotBlank(message = "{writeDate.notBlank}")
-	@DateTimeFormat (pattern="yyyy-mm-dd")
 	private String writeDate;
 	@NotEmpty(message = "{cardInfoList.notempty}")
-	private List<CardInfo>  cardInfoList;
-	private List<TWarningMessage>  warningMessageList;
-	private String infoMessage;
+	private List<RestCardInfo>  cardInfoList;
 
 }

@@ -15,6 +15,8 @@ import com.card.management.entity.AssembleDetailEntity;
 import com.card.management.entity.MBatchNumber;
 import com.card.management.entity.MBatchNumberExample;
 import com.card.management.entity.PreparatoryDetailEntity;
+import com.card.management.entity.TAssembleDetail;
+import com.card.management.entity.TAssembleDetailExample;
 import com.card.management.entity.TLoGradeHistory;
 import com.card.management.entity.TLoGradeHistoryExample;
 import com.card.management.entity.TPreparatoryDetail;
@@ -129,5 +131,19 @@ public class CardInfoManagementServiceImpl implements CardInfoManagementService 
 			return new ArrayList<TWarningMessage>();
 		}
 		return tmList;
+	}
+
+	@Override
+	public long createAssemblDdetail(List<TAssembleDetail> assembleDetailList) {
+		long result = tAssembleDetailMapper.insertAssembleDetail(assembleDetailList);
+		return result;
+	}
+
+	@Override
+	public void updateAssemblDdetail(TAssembleDetail assembleDetail) {
+		TAssembleDetailExample example = new TAssembleDetailExample();
+		example.createCriteria().andBatchNumberEqualTo(assembleDetail.getCardBindingUnique());
+		tAssembleDetailMapper.updateByExampleSelective(assembleDetail, example);
+		
 	}
 }

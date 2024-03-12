@@ -8,6 +8,7 @@ import java.util.List;
 import com.card.management.entity.AssembleDetailEntity;
 import com.card.management.entity.MBatchNumber;
 import com.card.management.entity.PreparatoryDetailEntity;
+import com.card.management.entity.TAssembleDetail;
 import com.card.management.entity.TLoGradeHistory;
 import com.card.management.entity.TPreparatoryDetail;
 import com.card.management.entity.TWarningMessage;
@@ -40,7 +41,14 @@ public interface CardInfoManagementService {
 	public long createBatchNumberPreparatoryDetail(
 			List<TPreparatoryDetail> preparatoryDetailEntityList);
 	
+	// 登录批量信息和组装明细信息
+	public long createAssemblDdetail(
+			List<TAssembleDetail> assembleDetailList);
+	
 	// 取得警告信息
 	public List<TWarningMessage> getWaringMessage();
+	
+	
+	public void updateAssemblDdetail(TAssembleDetail assembleDetail);
 
 }
