@@ -155,12 +155,12 @@
     insert into t_assemble_detail (id, batch_number, write_date, 
       card_binding_number, ticket_info, assemble_result, 
       ground_connection_result, withstand_voltage_result, 
-      ut_result, update_date, create_date
+      ut_result, piece_times,update_date, create_date
       )
     values (#{id,jdbcType=INTEGER}, #{batchNumber,jdbcType=VARCHAR}, #{writeDate,jdbcType=DATE}, 
       #{cardBindingNumber,jdbcType=VARCHAR}, #{ticketInfo,jdbcType=VARCHAR}, #{assembleResult,jdbcType=CHAR}, 
       #{groundConnectionResult,jdbcType=CHAR}, #{withstandVoltageResult,jdbcType=CHAR}, 
-      #{utResult,jdbcType=CHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP}
+      #{utResult,jdbcType=CHAR},#{pieceTimes,jdbcType=CHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.card.management.entity.TAssembleDetail">
@@ -194,6 +194,9 @@
       </if>
       <if test="withstandVoltageResult != null">
         withstand_voltage_result,
+      </if>
+      <if test="pieceTimes != null">
+        piece_times,
       </if>
       <if test="utResult != null">
         ut_result,
@@ -229,6 +232,9 @@
       </if>
       <if test="withstandVoltageResult != null">
         #{withstandVoltageResult,jdbcType=CHAR},
+      </if>
+  	  <if test="pieceTimes != null">
+        #{piece_times,jdbcType=CHAR},
       </if>
       <if test="utResult != null">
         #{utResult,jdbcType=CHAR},
@@ -484,6 +490,14 @@
 		    )
 		    </foreach>
 	  </insert>
-	  
+
+	 <update id="clearAssembleDetail" parameterType="java.util.List">
+		<foreach collection="list" item="item" separator=";">
+			UPDATE
+				T_ASSEMBLE_DETAIL 
+			SET card_binding_number = null 
+			WHERE card_binding_number = #{item}
+		</foreach>
+	 </update>
 	  
 </mapper>

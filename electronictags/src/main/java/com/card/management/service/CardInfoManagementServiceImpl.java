@@ -134,16 +134,30 @@ public class CardInfoManagementServiceImpl implements CardInfoManagementService 
 	}
 
 	@Override
-	public long createAssemblDdetail(List<TAssembleDetail> assembleDetailList) {
-		long result = tAssembleDetailMapper.insertAssembleDetail(assembleDetailList);
+	public long createAssemblDdetail(TAssembleDetail assembleDetail) {
+		long result = tAssembleDetailMapper.insert(assembleDetail);
 		return result;
 	}
 
 	@Override
 	public void updateAssemblDdetail(TAssembleDetail assembleDetail) {
 		TAssembleDetailExample example = new TAssembleDetailExample();
-		example.createCriteria().andBatchNumberEqualTo(assembleDetail.getCardBindingUnique());
+		example.createCriteria().andCardBindingNumberEqualTo(assembleDetail.getCardBindingNumber());
 		tAssembleDetailMapper.updateByExampleSelective(assembleDetail, example);
 		
+	}
+
+	@Override
+	public void clearAssembleDetail(List<String> clearAssembleDetailList) {
+		tAssembleDetailMapper.clearAssembleDetail(clearAssembleDetailList);
+	}
+
+	@Override
+	public List<TAssembleDetail>  getBatchNumberBybingNumber(String cardBindingNumber) {
+		TAssembleDetailExample example = new TAssembleDetailExample();
+		example.createCriteria().andCardBindingNumberEqualTo(cardBindingNumber);
+		List<TAssembleDetail> list = tAssembleDetailMapper.selectByExample(example);
+		
+		return list;
 	}
 }

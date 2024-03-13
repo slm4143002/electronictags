@@ -1,9 +1,7 @@
 package com.card.management.restapi.pojo;
 
-import java.util.List;
-
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,10 +12,10 @@ public class RestInputAssembleCard {
 	@NotBlank(message = "{batchNumber.notBlank}")
 	private String batchNumber;
 	private String machineCategoryName;
+	// 台数
 	@NotBlank(message = "{machineCount.notBlank}")
 	private String machineCount;
-	private String writeDate;
-	@NotEmpty(message = "{cardInfoList.notempty}")
-	private List<RestCardInfo>  cardInfoList;
+	@NotNull(message = "{restCardInfo.notempty}")
+	private RestCardInfo  restCardInfo;
 
 }

@@ -42,13 +42,16 @@ public interface CardInfoManagementService {
 			List<TPreparatoryDetail> preparatoryDetailEntityList);
 	
 	// 登录批量信息和组装明细信息
-	public long createAssemblDdetail(
-			List<TAssembleDetail> assembleDetailList);
+	public long createAssemblDdetail(TAssembleDetail assembleDetail);
 	
 	// 取得警告信息
 	public List<TWarningMessage> getWaringMessage();
 	
 	
 	public void updateAssemblDdetail(TAssembleDetail assembleDetail);
+	
+	public void clearAssembleDetail(List<String> clearAssembleDetailList);
+	
+	public List<TAssembleDetail> getBatchNumberBybingNumber(String cardBindingNumber);
 
 }
