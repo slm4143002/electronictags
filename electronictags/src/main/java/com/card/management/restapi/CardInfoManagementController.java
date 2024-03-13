@@ -373,7 +373,7 @@ public class CardInfoManagementController {
 			tad.setTicketInfo(restInputUt.getTicketInfo());
 			service.updateAssemblDdetail(tad);
 
-			if ("1".equals(restInputUt.getTicketInfo())) {
+			if ("1".equals(restInputUt.getCheckResult())) {
 				BatchProccessResult bp = new BatchProccessResult();
 				bp.setBatchNumber(tadl.getBatchNumber());
 				return Map.of("result", ApiResponse.success(Status.SUCCESS, bp));
