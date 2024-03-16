@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.thymeleaf.util.StringUtils;
 
@@ -32,7 +32,7 @@ import com.card.management.mapper.TWarningMessageMapper;
  * @author slm
  *
  */
-@Component
+@Service
 public class CardInfoManagementServiceImpl implements CardInfoManagementService {
 
 	@Autowired
@@ -82,11 +82,14 @@ public class CardInfoManagementServiceImpl implements CardInfoManagementService 
 	}
 
 	@Override
-	public int getAssembleDetailCount(String batchNumber) {
+	public int getAssembleDetailCount(String batchNumber,String cardBindingNumber) {
 		if (StringUtils.isEmptyOrWhitespace(batchNumber)) {
 			batchNumber = null;
 		}
-		long count = this.tAssembleDetailMapper.selectAssembleDetailCount(batchNumber);
+		if (StringUtils.isEmptyOrWhitespace(cardBindingNumber)) {
+			cardBindingNumber = null;
+		}
+		long count = this.tAssembleDetailMapper.selectAssembleDetailCount(batchNumber,cardBindingNumber);
 		return (int) count;
 	}
 

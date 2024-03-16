@@ -28,7 +28,7 @@ public interface CardInfoManagementService {
 	public List<PreparatoryDetailEntity> getPreparatoryDetailBybatchNumber(String batchNumber);
 
 	// 取得组装明细详细信息
-	public int getAssembleDetailCount(String batchNumber);
+	public int getAssembleDetailCount(String batchNumber,String cardBindingNumber);
 
 	public List<AssembleDetailEntity> getAssembleDetailBybatchNumber(String batchNumber);
 

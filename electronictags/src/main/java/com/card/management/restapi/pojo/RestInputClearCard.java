@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter @Setter @NoArgsConstructor
 /** UT*/
-public class RestInputClearCard {
+public class RestInputClearCard extends RestInputCard {
 	// 电子卡片信息
 	@NotEmpty(message = "{cardInfoList.notempty}")
 	private List<String> cardInfoList;

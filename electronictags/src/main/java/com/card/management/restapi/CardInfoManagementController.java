@@ -58,6 +58,9 @@ public class CardInfoManagementController {
 	@Autowired
 	private MessageSource messageSource;
 
+	@Autowired
+	public BaseStationSendApiService baseStationSendApi;
+
 	// 筹备批量查询
 	@GetMapping("/batchnumber")
 	public Map<String, Object> getCards(@RequestParam(value = "batchNumber") String batchNumber) {
@@ -95,7 +98,7 @@ public class CardInfoManagementController {
 			bn.setBatchNumber(mbn.getBatchNumber());
 			bn.setMachineCount(mbn.getMachineCount());
 			bn.setMachineCategoryName(mbn.getMachineCategoryName());
-			int detailcount = service.getAssembleDetailCount(batchNumber);
+			int detailcount = service.getAssembleDetailCount(batchNumber, null);
 			if (detailcount == 0) {
 				bn.setMachineNum(1);
 			} else {
@@ -192,10 +195,30 @@ public class CardInfoManagementController {
 				return Map.of("result", ApiResponse.error(Status.ERROR,
 						new ErrorResponse(ErrorCodeConst.MSG1003.getCode(), sb.toString())));
 			}
-
-			MBatchNumber mbn = service.getCards(restInputAssembleCard.getBatchNumber());
 			// 组装信息取得
 			RestCardInfo cardInfo = restInputAssembleCard.getRestCardInfo();
+
+			// 组装登录check
+			int detailcount = service.getAssembleDetailCount(restInputAssembleCard.getBatchNumber(),
+					cardInfo.getCardInfo());
+			if (detailcount > 0) {
+				String batchNumberInsertMessage = messageSource.getMessage("batchNumberInsertMessage",
+						new String[] { restInputAssembleCard.getBatchNumber() }, Locale.CHINA);
+
+				return Map.of("result", ApiResponse.error(Status.ERROR,
+						new ErrorResponse(ErrorCodeConst.MSG1002.getCode(), batchNumberInsertMessage)));
+			}
+
+			// 基站推送
+			String response = baseStationSendApi.postRequest(restInputAssembleCard, TemplateEnum.ASSEMBLE);
+			// 基站错误
+			if ("1".equals(response)) {
+				return Map.of("result", ApiResponse.error(Status.ERROR,
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(), ErrorCodeConst.MSG9002.getMessage())));
+			}
+
+			MBatchNumber mbn = service.getCards(restInputAssembleCard.getBatchNumber());
+
 			TAssembleDetail entity = new TAssembleDetail();
 			// 批量号
 			entity.setBatchNumber(restInputAssembleCard.getBatchNumber());
@@ -210,7 +233,7 @@ public class CardInfoManagementController {
 			// 电子卡绑定信息
 			entity.setCardBindingNumber(cardInfo.getCardInfo());
 
-			service.createAssemblDdetail(entity);
+			//service.createAssemblDdetail(entity);
 
 			return Map.of("result", ApiResponse.success(Status.SUCCESS,
 					new ErrorResponse(ErrorCodeConst.MSG6001.getCode(), ErrorCodeConst.MSG6001.getMessage())));

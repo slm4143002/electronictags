@@ -13,7 +13,7 @@ import com.card.management.entity.TAssembleDetailExample;
 public interface TAssembleDetailMapper {
 	List<AssembleDetailEntity> selectAssembleDetailBybatchNumber(String batchNumber);
 
-	long selectAssembleDetailCount(String batchNumber);
+	long selectAssembleDetailCount(@Param("batchNumber")String batchNumber,@Param("cardBindingNumber")String cardBindingNumber);
 	
 	long insertAssembleDetail(List<TAssembleDetail> assembleDetailList);
 	

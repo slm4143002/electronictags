@@ -233,7 +233,7 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 		if (matcher.matches()) {
 			PageHelper.startPage(pageNumber, Integer.valueOf(pageSize));
 		} else {
-			PageHelper.startPage(1, service.getAssembleDetailCount(null));
+			PageHelper.startPage(1, service.getAssembleDetailCount(null,null));
 		}
 
 		List<AssembleDetailEntity> all = service.getAssembleDetailBybatchNumber(null);

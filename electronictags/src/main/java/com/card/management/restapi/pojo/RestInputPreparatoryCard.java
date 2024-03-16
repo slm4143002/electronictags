@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter @Setter @NoArgsConstructor
-public class RestInputPreparatoryCard {
+public class RestInputPreparatoryCard extends RestInputCard {
 
 	@NotBlank(message = "{batchNumber.notBlank}")
 	private String batchNumber;
