@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.card.management.eleconst.ElectronictagsConst;
 import com.card.management.entity.MBatchNumber;
 import com.card.management.entity.TAssembleDetail;
 import com.card.management.entity.TPreparatoryDetail;
@@ -141,6 +142,14 @@ public class CardInfoManagementController {
 				return Map.of("result", ApiResponse.error(Status.ERROR,
 						new ErrorResponse(ErrorCodeConst.MSG1002.getCode(), batchNumberInsertMessage)));
 			}
+			// 基站推送
+			String response = baseStationSendApi.postRequest(restInputPreparatoryCard, TemplateEnum.PREPARATORY);
+			// 基站错误
+			if ("1".equals(response)) {
+				return Map.of("result", ApiResponse.error(Status.ERROR,
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(), ErrorCodeConst.MSG9002.getMessage())));
+			}
+
 			// 日期
 			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 			Date writeDate = formatter.parse(restInputPreparatoryCard.getWriteDate());
@@ -269,18 +278,47 @@ public class CardInfoManagementController {
 						new ErrorResponse(ErrorCodeConst.MSG1003.getCode(), sb.toString())));
 			}
 
+			// 组装check
 			List<TAssembleDetail> list = service.getBatchNumberBybingNumber(restInputGroundConnection.getCardInfo());
 			if (CollectionUtils.isEmpty(list)) {
 				return Map.of("result", ApiResponse.error(Status.ERROR,
 						new ErrorResponse(ErrorCodeConst.MSG1006.getCode(), ErrorCodeConst.MSG1006.getMessage())));
 			}
+
+			// 取得组装结果
 			TAssembleDetail tadl = list.get(0);
+
 			// check前面工序是否完成
-			if (!"1".equals(tadl.getAssembleResult())) {
+			if (!ElectronictagsConst.ASSEMBLE_RESULT_OK.equals(tadl.getAssembleResult())) {
 				return Map.of("result", ApiResponse.error(Status.ERROR,
 						new ErrorResponse(ErrorCodeConst.MSG1006.getCode(), ErrorCodeConst.MSG1006.getMessage())));
 			}
 
+			MBatchNumber mbn = service.getCards(tadl.getCardBindingNumber());
+			RestInputAssembleCard restInputAssembleCard = new RestInputAssembleCard();
+			RestCardInfo restCardInfo = new RestCardInfo();
+			// 电子卡信息
+			restCardInfo.setCardInfo(tadl.getCardBindingNumber());
+			// 台数
+			restCardInfo.setCardCount("" + tadl.getPieceTimes() + "/" + mbn.getMachineCount());
+			restInputAssembleCard.setRestCardInfo(restCardInfo);
+			restInputAssembleCard.setBatchNumber(tadl.getBatchNumber());
+			restInputAssembleCard.setAssembleResult(EslEnum.ASSEMBLE_RESULT.getResultLabelOK());
+			if (EslEnum.GROUND_CONNECTION_RESULT.getResultOK().equals(restInputGroundConnection.getCheckResult())) {
+				restInputAssembleCard.setGroundConnectionResult(EslEnum.GROUND_CONNECTION_RESULT.getResultLabelOK());
+			} else {
+				restInputAssembleCard.setGroundConnectionResult(EslEnum.GROUND_CONNECTION_RESULT.getResultLabelNG());
+			}
+
+			// 基站推送
+			String response = baseStationSendApi.postRequest(restInputAssembleCard, TemplateEnum.ASSEMBLE);
+			// 基站错误
+			if (ElectronictagsConst.ESL_RESPONSE_ERROR_CODE.equals(response)) {
+				return Map.of("result", ApiResponse.error(Status.ERROR,
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(), ErrorCodeConst.MSG9002.getMessage())));
+			}
+
+			// DB更新
 			TAssembleDetail tad = new TAssembleDetail();
 			tad.setCardBindingNumber(restInputGroundConnection.getCardInfo());
 			tad.setGroundConnectionResult(restInputGroundConnection.getCheckResult());
@@ -335,6 +373,35 @@ public class CardInfoManagementController {
 						new ErrorResponse(ErrorCodeConst.MSG1005.getCode(), ErrorCodeConst.MSG1005.getMessage())));
 			}
 
+			MBatchNumber mbn = service.getCards(tadl.getCardBindingNumber());
+			RestInputAssembleCard restInputAssembleCard = new RestInputAssembleCard();
+			RestCardInfo restCardInfo = new RestCardInfo();
+			// 电子卡信息
+			restCardInfo.setCardInfo(tadl.getCardBindingNumber());
+			// 台数
+			restCardInfo.setCardCount("" + tadl.getPieceTimes() + "/" + mbn.getMachineCount());
+			restInputAssembleCard.setRestCardInfo(restCardInfo);
+			restInputAssembleCard.setBatchNumber(tadl.getBatchNumber());
+			// 组装
+			restInputAssembleCard.setAssembleResult(EslEnum.ASSEMBLE_RESULT.getResultLabelOK());
+			// 接地
+			restInputAssembleCard.setGroundConnectionResult(EslEnum.GROUND_CONNECTION_RESULT.getResultLabelOK());
+			// 耐压
+			if (EslEnum.WITHSTAND_VOLTAGE_RESULT.getResultOK().equals(restInputWithstandVoltage.getCheckResult())) {
+				restInputAssembleCard.setGroundConnectionResult(EslEnum.WITHSTAND_VOLTAGE_RESULT.getResultLabelOK());
+			} else {
+				restInputAssembleCard.setGroundConnectionResult(EslEnum.WITHSTAND_VOLTAGE_RESULT.getResultLabelNG());
+			}
+
+			// 基站推送
+			String response = baseStationSendApi.postRequest(restInputAssembleCard, TemplateEnum.ASSEMBLE);
+			// 基站错误
+			if (ElectronictagsConst.ESL_RESPONSE_ERROR_CODE.equals(response)) {
+				return Map.of("result", ApiResponse.error(Status.ERROR,
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(), ErrorCodeConst.MSG9002.getMessage())));
+			}
+
+			// DB更新
 			TAssembleDetail tad = new TAssembleDetail();
 			tad.setCardBindingNumber(restInputWithstandVoltage.getCardInfo());
 			tad.setWithstandVoltageResult(restInputWithstandVoltage.getCheckResult());
@@ -390,6 +457,37 @@ public class CardInfoManagementController {
 						new ErrorResponse(ErrorCodeConst.MSG1004.getCode(), ErrorCodeConst.MSG1004.getMessage())));
 			}
 
+			MBatchNumber mbn = service.getCards(tadl.getCardBindingNumber());
+			RestInputAssembleCard restInputAssembleCard = new RestInputAssembleCard();
+			RestCardInfo restCardInfo = new RestCardInfo();
+			// 电子卡信息
+			restCardInfo.setCardInfo(tadl.getCardBindingNumber());
+			// 台数
+			restCardInfo.setCardCount("" + tadl.getPieceTimes() + "/" + mbn.getMachineCount());
+			restInputAssembleCard.setRestCardInfo(restCardInfo);
+			restInputAssembleCard.setBatchNumber(tadl.getBatchNumber());
+			// 组装
+			restInputAssembleCard.setAssembleResult(EslEnum.ASSEMBLE_RESULT.getResultLabelOK());
+			// 接地
+			restInputAssembleCard.setGroundConnectionResult(EslEnum.GROUND_CONNECTION_RESULT.getResultLabelOK());
+			// 耐压
+			restInputAssembleCard.setWithstandVoltageResult(EslEnum.WITHSTAND_VOLTAGE_RESULT.getResultLabelOK());
+			// UT
+			if (EslEnum.UT_RESULT.getResultOK().equals(restInputUt.getCheckResult())) {
+				restInputAssembleCard.setGroundConnectionResult(EslEnum.UT_RESULT.getResultLabelOK());
+			} else {
+				restInputAssembleCard.setGroundConnectionResult(EslEnum.UT_RESULT.getResultLabelNG());
+			}
+
+			// 基站推送
+			String response = baseStationSendApi.postRequest(restInputAssembleCard, TemplateEnum.ASSEMBLE);
+			// 基站错误
+			if (ElectronictagsConst.ESL_RESPONSE_ERROR_CODE.equals(response)) {
+				return Map.of("result", ApiResponse.error(Status.ERROR,
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(), ErrorCodeConst.MSG9002.getMessage())));
+			}
+
+			// DB更新
 			TAssembleDetail tad = new TAssembleDetail();
 			tad.setCardBindingNumber(restInputUt.getCardInfo());
 			tad.setUtResult(restInputUt.getCheckResult());
@@ -432,6 +530,14 @@ public class CardInfoManagementController {
 				});
 				return Map.of("result", ApiResponse.error(Status.ERROR,
 						new ErrorResponse(ErrorCodeConst.MSG1003.getCode(), sb.toString())));
+			}
+
+			// 基站推送
+			String response = baseStationSendApi.postRequest(restInputClearCard, TemplateEnum.CLEAR);
+			// 基站错误
+			if (ElectronictagsConst.ESL_RESPONSE_ERROR_CODE.equals(response)) {
+				return Map.of("result", ApiResponse.error(Status.ERROR,
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(), ErrorCodeConst.MSG9002.getMessage())));
 			}
 
 			service.clearAssembleDetail(restInputClearCard.getCardInfoList());
