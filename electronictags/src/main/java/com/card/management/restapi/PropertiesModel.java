@@ -14,6 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PropertiesModel {
 	private String apiUrl;
+	private String apiQueryUrl;
 	private String storeCode;
 	private String templateIdPreparatory;
 	private String templateIdAssemble;

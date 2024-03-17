@@ -1,7 +1,5 @@
 package com.card.management.restapi.eslpojo;
 
-import java.util.List;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,7 +8,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class F1Template {
-	// 产品内容模板
-	public List<ProductTemplate> productTemplate;
+	// 水墨屏ID 电子卡片信息
+	public String esl_code;
+	// 水墨屏模板ID
+	public String template_id;
+	public Product product;
 
 }

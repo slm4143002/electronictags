@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,11 @@ import com.card.management.entity.PreparatoryDetailEntity;
 import com.card.management.entity.TLoGradeHistory;
 import com.card.management.entity.TPreparatoryDetail;
 import com.card.management.entity.TWarningMessage;
+import com.card.management.restapi.BaseStationSendApiService;
+import com.card.management.restapi.ErrorCodeConst;
+import com.card.management.restapi.TemplateEnum;
+import com.card.management.restapi.pojo.RestCardInfo;
+import com.card.management.restapi.pojo.RestInputPreparatoryCard;
 import com.card.management.service.CardInfoManagementService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -47,10 +53,13 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 
 	@Autowired
 	public CardInfoManagementService service;
-	
+
 	@Autowired
 	private MessageSource messageSource;
-	
+
+	@Autowired
+	public BaseStationSendApiService baseStationSendApi;
+
 	/**
 	 * login画面
 	 * @return
@@ -59,7 +68,7 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 	public String getCards() {
 		return "navigation";
 	}
-	
+
 	/**
 	 * 跳转到筹备电子卡片登录画面
 	 * @param cardview
@@ -68,7 +77,7 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 	 * @return
 	 */
 	@GetMapping("/gotoCardview")
-	public String creadCard(CardView cardView,Model model) {
+	public String creadCard(CardView cardView, Model model) {
 		List<TWarningMessage> wmList = service.getWaringMessage();
 		CardView card = new CardView();
 		card.setWarningMessageList(wmList);
@@ -120,18 +129,92 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 	 *
 	 */
 	@PostMapping("/createCardInfo")
-	public String createCardInfo(@Valid CardView cardView,BindingResult bindingResult,Model model) {
+	public String createCardInfo(@Valid CardView cardView, BindingResult bindingResult, Model model) {
 		try {
 			if (bindingResult.hasErrors()) {
 				return "cardview";
 			}
 			long detailcount = service.getPreparatoryDetailCount(cardView.getBatchNumber());
-			if (detailcount>0) {
-				String batchNumberInsertMessage = messageSource.getMessage("batchNumberInsertMessage", new String[]{cardView.getBatchNumber()}, Locale.CHINA);
-				ObjectError error = new ObjectError("batchNumber",batchNumberInsertMessage);
+			if (detailcount > 0) {
+				String batchNumberInsertMessage = messageSource.getMessage("batchNumberInsertMessage",
+						new String[] { cardView.getBatchNumber() }, Locale.CHINA);
+				ObjectError error = new ObjectError("batchNumber", batchNumberInsertMessage);
 				bindingResult.addError(error);
 				return "cardview";
 			}
+
+			// 基站推送
+			List<String> f3List = new ArrayList<String>();
+			RestInputPreparatoryCard restInputPreparatoryCard = new RestInputPreparatoryCard();
+			List<RestCardInfo> cardInfoList = new ArrayList<RestCardInfo>();
+			restInputPreparatoryCard.setBatchNumber(cardView.getBatchNumber());
+			restInputPreparatoryCard.setMachineCategoryName(cardView.getMachineCategoryName());
+			restInputPreparatoryCard.setCarCount(cardView.getCarCount());
+			restInputPreparatoryCard.setMachineCount(cardView.getMachineCount());
+			restInputPreparatoryCard.setWriteDate(cardView.getWriteDate());
+			cardView.getCardInfoList().forEach(cinfo -> {
+				RestCardInfo restCardInfo = new RestCardInfo();
+				restCardInfo.setCardCount(cinfo.getCardCount());
+				restCardInfo.setCardInfo(cinfo.getCardInfo());
+				cardInfoList.add(restCardInfo);
+				f3List.add(cinfo.getCardInfo());
+			});
+			restInputPreparatoryCard.setCardInfoList(cardInfoList);
+			String response = baseStationSendApi.postRequest(restInputPreparatoryCard, TemplateEnum.PREPARATORY);
+			// 基站错误
+			if ("1".equals(response)) {
+				String eslErrorMessage = ErrorCodeConst.MSG9002.getMessage();
+				ObjectError error = new ObjectError("batchNumber", eslErrorMessage);
+				bindingResult.addError(error);
+				return "cardview";
+			}
+			// 拉取基站水墨屏信息
+			boolean isOver = true;
+			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
+			//			while(isCount) {
+			//				eqList = baseStationSendApi.getEslResult(f3List);
+			//				if (CollectionUtils.isEmpty(eqList)) {
+			//					ObjectError error = new ObjectError("batchNumber", ErrorCodeConst.MSG9002.getMessage());
+			//					bindingResult.addError(error);
+			//					return "cardview";
+			//				}
+			//				if (eqList.size() == f3List.size()) {
+			//					isCount=false;
+			//				}
+			//				Thread.sleep(1000);
+			//			}
+
+			while (isOver) {
+				isOver = false;
+				eqList = baseStationSendApi.getEslResult(f3List);
+				if (CollectionUtils.isEmpty(eqList)) {
+					ObjectError error = new ObjectError("batchNumber", ErrorCodeConst.MSG9002.getMessage());
+					bindingResult.addError(error);
+					return "cardview";
+				}
+				for (int i = 0; i < eqList.size(); i++) {
+					if ((Integer) eqList.get(i).get("action") != 0 && (Integer) eqList.get(i).get("action") != 200) {
+						isOver = true;
+					}
+				}
+				Thread.sleep(500);
+
+			}
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < eqList.size(); i++) {
+				System.out.println("=================-----------------)" + eqList.get(i).get("action"));
+				if ((Integer) eqList.get(i).get("action") != 0) {
+					sb.append(eqList.get(i).get("esl_code"));
+					sb.append("/");
+				}
+			}
+
+			if (sb.length() != 0) {
+				ObjectError error = new ObjectError("batchNumber", sb.toString() + ErrorCodeConst.MSG9002.getMessage());
+				bindingResult.addError(error);
+				return "cardview";
+			}
+
 			// 日期
 			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 			Date writeDate = formatter.parse(cardView.getWriteDate());
@@ -158,7 +241,8 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 			return "cardview";
 		}
 		CardView card = new CardView();
-		String infoMessage = messageSource.getMessage("cardInfoFinshied", new String[]{cardView.getBatchNumber()}, Locale.CHINA);
+		String infoMessage = messageSource.getMessage("cardInfoFinshied", new String[] { cardView.getBatchNumber() },
+				Locale.CHINA);
 		card.setInfoMessage(infoMessage);
 		model.addAttribute("cardView", card);
 
@@ -171,10 +255,10 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 	 * @return
 	 */
 	private String parseCarCount(String card) {
-		String[] cardArray=new String[2];
+		String[] cardArray = new String[2];
 		try {
 			cardArray = card.split("/");
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return cardArray[0];
@@ -233,7 +317,7 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 		if (matcher.matches()) {
 			PageHelper.startPage(pageNumber, Integer.valueOf(pageSize));
 		} else {
-			PageHelper.startPage(1, service.getAssembleDetailCount(null,null));
+			PageHelper.startPage(1, service.getAssembleDetailCount(null, null));
 		}
 
 		List<AssembleDetailEntity> all = service.getAssembleDetailBybatchNumber(null);

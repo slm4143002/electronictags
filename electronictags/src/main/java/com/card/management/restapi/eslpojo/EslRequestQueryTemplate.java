@@ -9,15 +9,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class EslRequestTemplate {
+public class EslRequestQueryTemplate {
 
 	// ⻔店编码
 	public String store_code;
-	// 直接刷屏数据数组
-	public List<F1Template> f1;
 	// 默认为0
 	public String is_base64;
 	// 令牌
 	public String sign;
-
+	// f1
+	public int f1;
+	// f2
+	public int f2;
+	// f3(水墨屏id数组)
+	public List<String> f3;
 }

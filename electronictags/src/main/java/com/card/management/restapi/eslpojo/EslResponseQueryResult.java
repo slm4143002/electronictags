@@ -4,11 +4,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** 筹备模板*/
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProductPreparatoryTemplate extends ProductTemplate {
-
-	Product  product;
+/* 基站返回值 **/
+public class EslResponseQueryResult {
+	public String esl_code;
+	public int action;
 }
