@@ -1,7 +1,62 @@
 $(function() {
-	var nIntervId;
+	//var nIntervId;
 	$("#batchNumber").focus();
+	$(document).on("keypress", "input:not(.allow_submit)", function(event) {
+		return event.which !== 13;
+	});
 	document.addEventListener('keyup', function() {
+		$("#cardInfo1").keyup(function(event) {
+			if (event.which == 13) {
+				$("#cardInfo2").focus();
+			}
+		});
+		$("#cardInfo2").keyup(function(event) {
+			if (event.which == 13) {
+				$("#cardInfo3").focus();
+			}
+		});
+		$("#cardInfo3").keyup(function(event) {
+			if (event.which == 13) {
+				$("#cardInfo4").focus();
+			}
+		});
+		$("#cardInfo4").keyup(function(event) {
+			if (event.which == 13) {
+				$("#cardInfo5").focus();
+			}
+		});
+		$("#cardInfo5").keyup(function(event) {
+			if (event.which == 13) {
+				$("#cardInfo6").focus();
+			}
+		});
+		$("#cardInfo6").keyup(function(event) {
+			if (event.which == 13) {
+				$("#cardInfo7").focus();
+			}
+		});
+		$("#cardInfo7").keyup(function(event) {
+			if (event.which == 13) {
+				$("#cardInfo8").focus();
+			}
+		});
+		$("#cardInfo8").keyup(function(event) {
+			if (event.which == 13) {
+				$("#cardInfo9").focus();
+			}
+		});
+		$("#cardInfo9").keyup(function(event) {
+			if (event.which == 13) {
+				$("#cardInfo10").focus();
+			}
+		});
+		$("#cardInfo10").keyup(function(event) {
+			if (event.which == 13) {
+				$("#cardInfo1").focus();
+			}
+		});
+	});
+	/*document.addEventListener('keyup', function() {
 		$("#cardInfo1").on("input", function() {
 
 			if (!nIntervId) {
@@ -164,13 +219,13 @@ $(function() {
 		$("#cardInfo10").unbind();
 		$("#cardInfo1").focus();
 
-	}
-	
+	}*/
+
 	// 搜索按下
 	$("#search").click(function(event) {
 		event.preventDefault();
-		if ($("#batchNumber").val()=="") {
-			$("#errorInfo").removeClass( "d-none" )
+		if ($("#batchNumber").val() == "") {
+			$("#errorInfo").removeClass("d-none")
 			$("#errorInfo").text("请输入批量号!")
 			$("#batchNumber").focus();
 			$("#errorFormMsg").remove();
@@ -178,7 +233,7 @@ $(function() {
 		} else {
 			getCardInfo();
 		}
-		
+
 	});
 	function getCardInfo() {
 		$.ajax(
@@ -199,8 +254,8 @@ $(function() {
 						for (var i = 1; i <= `${data.carCount}`; i++) {
 							$("#cardcount" + i).val(i + "/" + `${data.carCount}`);
 						}
-						
-						for (j=1; j <= 10; j++) {
+
+						for (j = 1; j <= 10; j++) {
 							$("#cardInfo" + j).removeAttr('disabled');
 						}
 						var k = (Number(`${data.carCount}`) + 1)
@@ -215,18 +270,18 @@ $(function() {
 						$("#machineCount").val("");
 						$("#carCount").val("");
 						$("#writeDate").val("");
-						
-						
-						for (j=1; j <= 10; j++) {
+
+
+						for (j = 1; j <= 10; j++) {
 							$("#cardInfo" + j).prop("disabled", true);
 							$("#cardInfo" + j).removeAttr('placeholder');
 							$("#cardcount" + j).prop("disabled", true);
 							$("#cardcount" + i).val("");
 						}
 						$("#batchNumber").focus();
-						$("#errorInfo").removeClass( "d-none" )
+						$("#errorInfo").removeClass("d-none")
 						$("#errorInfo").text("要处理的批量号不存在！请确认!")
-						$("#errorFormMsg" ).remove();
+						$("#errorFormMsg").remove();
 						$("#infoFormMsg").remove();
 					}
 				},
@@ -241,17 +296,17 @@ $(function() {
 });
 
 function clearValue(num) {
-	$("#cardInfo"+num).val("")	
+	$("#cardInfo" + num).val("")
 }
 
 function checkItem() {
 	$('#loadingModal').modal('show');
 	const letters = new Set();
 	for (var i = 1; i <= $("#carCount").val(); i++) {
-		
+
 		if ($("#cardInfo" + i).val() == "") {
 			event.preventDefault();
-			$("#carderrorInfo").removeClass( "d-none" )
+			$("#carderrorInfo").removeClass("d-none")
 			$("#carderrorInfo").text("请扫码输入！")
 			$("#cardInfo" + i).focus();
 			return;
@@ -261,11 +316,11 @@ function checkItem() {
 
 	if (letters.size != $("#carCount").val()) {
 		event.preventDefault();
-		$("#carderrorInfo").removeClass( "d-none" )
+		$("#carderrorInfo").removeClass("d-none")
 		$("#carderrorInfo").text("有重复信息，请确认!")
 		return;
 	}
-	
+
 }
 
 
