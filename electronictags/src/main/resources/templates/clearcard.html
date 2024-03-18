@@ -29,8 +29,8 @@
 		<form class="form-group" action="#" th:action="@{/clearCardInfo}" th:object="${cardView}" method="post"
 			id="card_form">
 			<div class="form-group ">
-			    <div class="alert alert-primary text-center" role="alert" th:if="${cardView.infoMessage}"
-				th:text="${cardView.infoMessage}" id="infoFormMsg" />
+			<div class="alert alert-primary text-center" role="alert" th:if="${cardView.infoMessage}"
+				 th:text="${cardView.infoMessage}" id="infoFormMsg" />
 				<div style="color: rgb(255, 128, 128);" th:if="${#fields.hasAnyErrors()}" id="errorFormMsg">
 					<ul>
 						<li th:each="err : ${#fields.allErrors()}" th:text="${err}" />
@@ -103,6 +103,14 @@
 			     <input type="submit" class="btn btn-primary btn-lg mx-2" value="清除" onclick="checkItem()" id="card_form" />
 			</div>
 		</form>
+	</div>
+	<div class="modal fade" id="loadingModal">
+		<div
+			style="width: 200px;height:20px; z-index: 20000; position: absolute; text-align: center; left: 50%; top: 50%;margin-left:-100px;margin-top:-10px">
+			<div class="spinner-border" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
 	</div>
 </body>
 

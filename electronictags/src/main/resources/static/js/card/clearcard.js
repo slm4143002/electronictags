@@ -74,12 +74,16 @@ function checkItem() {
 	if (letters.size != cardInfo.length) {
 		event.preventDefault();
 		$("#errorInfo").removeClass("d-none")
-		$("#errorInfo").text("电子卡片有重复的信息,请确认!")
+		$("#errorInfo").text("电子卡片有重复的信息,请确认!");
+		return;
 	} else if (letters.size == 0) {
 		event.preventDefault();
-		$("#errorInfo").removeClass("d-none")
-		$("#errorInfo").text("请输入要清除的卡片的信息!")
+		$("#errorInfo").removeClass("d-none");
+		$("#errorInfo").text("请输入要清除的卡片的信息!");
+		return;
 	}
+	
+	$('#loadingModal').modal('show');
 }
 
 
