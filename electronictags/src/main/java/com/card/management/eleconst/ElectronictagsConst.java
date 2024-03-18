@@ -10,10 +10,10 @@ public class ElectronictagsConst {
 	// UT结果
 	public static String UT_RESULT_OK ="1";
 	
-	public static String ASSEMBLE_RESULT_NG ="1";
-	public static String GROUND_CONNECTION_RESULT_NG ="1";
-	public static String WITHSTAND_VOLTAGE_RESULT_NG ="1";
-	public static String UT_RESULT_NG ="1";
+	public static String ASSEMBLE_RESULT_NG ="0";
+	public static String GROUND_CONNECTION_RESULT_NG ="0";
+	public static String WITHSTAND_VOLTAGE_RESULT_NG ="0";
+	public static String UT_RESULT_NG ="0";
 	
 	// 基站返回error
 	public static String ESL_RESPONSE_ERROR_CODE ="1";

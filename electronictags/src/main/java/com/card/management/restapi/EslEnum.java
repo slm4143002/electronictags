@@ -32,4 +32,15 @@ public enum EslEnum {
 	public String getResultNG() {
 		return resultNG;
 	}
+	
+	public static String getResultLabelOK(String result) {
+        for (EslEnum e : EslEnum.values()) {
+            if (e.getResultOK().equals(result)) {
+                return e.getResultLabelOK();
+            } else {
+            	 return e.getResultLabelNG();
+            }
+        }
+        return "";
+    }
 }

@@ -16,8 +16,6 @@ import com.card.management.restapi.eslpojo.EslRequestTemplate;
 import com.card.management.restapi.eslpojo.EslResponseResult;
 import com.card.management.restapi.eslpojo.F1Template;
 import com.card.management.restapi.eslpojo.Product;
-import com.card.management.restapi.eslpojo.ProductAssembleTemplate;
-import com.card.management.restapi.eslpojo.ProductTemplate;
 import com.card.management.restapi.pojo.RestInputAssembleCard;
 import com.card.management.restapi.pojo.RestInputCard;
 import com.card.management.restapi.pojo.RestInputClearCard;
@@ -45,7 +43,7 @@ public class BaseStationSendApiService {
 			ResponseEntity<ArrayList> result = sendPostRequest(pmodel.getApiQueryUrl(), template, ArrayList.class);
 			ArrayList<java.util.LinkedHashMap> eslResult = result.getBody();
 			return eslResult;
-		}catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -83,32 +81,40 @@ public class BaseStationSendApiService {
 					f1.setProduct(product);
 					f1List.add(f1);
 				});
+
 				template.setF1(f1List);
+
 				break;
 			// 组装
 			case ASSEMBLE:
 				RestInputAssembleCard raCard1 = (RestInputAssembleCard) restInputCard;
-				List<ProductTemplate> ptList1 = new ArrayList<ProductTemplate>();
-				ProductAssembleTemplate pt = new ProductAssembleTemplate();
-				// 批量号
-				pt.setF6(raCard1.getBatchNumber());
+				List<F1Template> f2List = new ArrayList<F1Template>();
+				F1Template f2 = new F1Template();
+				// 水墨屏id
+				f2.setEsl_code(raCard1.getRestCardInfo().getCardInfo());
+				// 筹备模板
+				f2.setTemplate_id(pmodel.getTemplateIdAssemble());
+
+				Product product1 = new Product();
+				// 机种名称
+				product1.setF1(raCard1.getMachineCategoryName());
 				// 组装结果
-				pt.setF2(raCard1.getAssembleResult());
+				product1.setF2(EslEnum.getResultLabelOK(raCard1.getAssembleResult()));
 				// 接地结果
-				pt.setF3(raCard1.getGroundConnectionResult());
+				product1.setF3(EslEnum.getResultLabelOK(raCard1.getGroundConnectionResult()));
 				// 耐压结果
-				pt.setF4(raCard1.getWithstandVoltageResult());
+				product1.setF4(EslEnum.getResultLabelOK(raCard1.getWithstandVoltageResult()));
 				// UT结果
-				pt.setF5(raCard1.getUtResult());
-				// 台数当前
-				pt.setF7(raCard1.getRestCardInfo().getCardCount());
-				// 电子卡片信息
-				//			pt.setEsl_code(raCard1.getRestCardInfo().getCardInfo());
-				//			// 组装模板
-				//			pt.setTemplate_id(pmodel.getTemplateIdAssemble());
-				//			ptList1.add(pt);
-				//			f1.setProductTemplate(ptList1);
-				//			template.setF1(f1);
+				product1.setF5(EslEnum.getResultLabelOK(raCard1.getUtResult()));
+				// 组装批量号
+				product1.setF6(raCard1.getBatchNumber());
+				// 车数当前
+				product1.setF7(raCard1.getRestCardInfo().getCardCount());
+				f2.setProduct(product1);
+				f2List.add(f2);
+
+				template.setF1(f2List);
+
 				break;
 			// 清屏
 			case CLEAR:
@@ -120,10 +126,11 @@ public class BaseStationSendApiService {
 					f3.setEsl_code(cardInfo);
 					// 筹备模板
 					f3.setTemplate_id(pmodel.getTemplateIdClear());
-					Product product = new Product();
-					f3.setProduct(product);
+					Product product2 = new Product();
+					f3.setProduct(product2);
 					f3List.add(f3);
 				});
+
 				template.setF1(f3List);
 
 				break;

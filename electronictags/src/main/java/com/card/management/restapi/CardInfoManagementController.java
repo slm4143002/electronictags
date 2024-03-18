@@ -8,6 +8,7 @@ import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -276,7 +277,41 @@ public class CardInfoManagementController {
 			// 基站错误
 			if ("1".equals(response)) {
 				return Map.of("result", ApiResponse.error(Status.ERROR,
-						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(), ErrorCodeConst.MSG9002.getMessage())));
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
+								ErrorCodeConst.MSG9002.getMessage())));
+			}
+			// 拉取基站水墨屏信息
+			boolean isOver = true;
+			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
+			while (isOver) {
+				isOver = false;
+				eqList = baseStationSendApi
+						.getEslResult(Arrays.asList(restInputAssembleCard.getRestCardInfo().getCardInfo()));
+				if (CollectionUtils.isEmpty(eqList)) {
+					return Map.of("result", ApiResponse.error(Status.ERROR,
+							new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
+									ErrorCodeConst.MSG9002.getMessage())));
+				}
+				for (int i = 0; i < eqList.size(); i++) {
+					if ((Integer) eqList.get(i).get("action") != 0 && (Integer) eqList.get(i).get("action") != 200) {
+						isOver = true;
+					}
+				}
+				Thread.sleep(500);
+
+			}
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < eqList.size(); i++) {
+				if ((Integer) eqList.get(i).get("action") != 0) {
+					sb.append(eqList.get(i).get("esl_code"));
+					sb.append("/");
+				}
+			}
+
+			if (sb.length() != 0) {
+				return Map.of("result", ApiResponse.error(Status.ERROR,
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
+								sb.toString() + ErrorCodeConst.MSG9002.getMessage())));
 			}
 
 			MBatchNumber mbn = service.getCards(restInputAssembleCard.getBatchNumber());
@@ -289,13 +324,13 @@ public class CardInfoManagementController {
 			// 日期
 			entity.setWriteDate(mbn.getWriteDate());
 			// 组装OK
-			entity.setAssembleResult("1");
+			entity.setAssembleResult(EslEnum.ASSEMBLE_RESULT.getResultOK());
 			entity.setUpdateDate(new Date());
 			entity.setCreateDate(new Date());
 			// 电子卡绑定信息
 			entity.setCardBindingNumber(cardInfo.getCardInfo());
 
-			//service.createAssemblDdetail(entity);
+			service.createAssemblDdetail(entity);
 
 			return Map.of("result", ApiResponse.success(Status.SUCCESS,
 					new ErrorResponse(ErrorCodeConst.MSG6001.getCode(), ErrorCodeConst.MSG6001.getMessage())));
@@ -366,9 +401,43 @@ public class CardInfoManagementController {
 			// 基站推送
 			String response = baseStationSendApi.postRequest(restInputAssembleCard, TemplateEnum.ASSEMBLE);
 			// 基站错误
-			if (ElectronictagsConst.ESL_RESPONSE_ERROR_CODE.equals(response)) {
+			if ("1".equals(response)) {
 				return Map.of("result", ApiResponse.error(Status.ERROR,
-						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(), ErrorCodeConst.MSG9002.getMessage())));
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
+								ErrorCodeConst.MSG9002.getMessage())));
+			}
+			// 拉取基站水墨屏信息
+			boolean isOver = true;
+			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
+			while (isOver) {
+				isOver = false;
+				eqList = baseStationSendApi
+						.getEslResult(Arrays.asList(restInputAssembleCard.getRestCardInfo().getCardInfo()));
+				if (CollectionUtils.isEmpty(eqList)) {
+					return Map.of("result", ApiResponse.error(Status.ERROR,
+							new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
+									ErrorCodeConst.MSG9002.getMessage())));
+				}
+				for (int i = 0; i < eqList.size(); i++) {
+					if ((Integer) eqList.get(i).get("action") != 0 && (Integer) eqList.get(i).get("action") != 200) {
+						isOver = true;
+					}
+				}
+				Thread.sleep(500);
+
+			}
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < eqList.size(); i++) {
+				if ((Integer) eqList.get(i).get("action") != 0) {
+					sb.append(eqList.get(i).get("esl_code"));
+					sb.append("/");
+				}
+			}
+
+			if (sb.length() != 0) {
+				return Map.of("result", ApiResponse.error(Status.ERROR,
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
+								sb.toString() + ErrorCodeConst.MSG9002.getMessage())));
 			}
 
 			// DB更新
@@ -449,9 +518,43 @@ public class CardInfoManagementController {
 			// 基站推送
 			String response = baseStationSendApi.postRequest(restInputAssembleCard, TemplateEnum.ASSEMBLE);
 			// 基站错误
-			if (ElectronictagsConst.ESL_RESPONSE_ERROR_CODE.equals(response)) {
+			if ("1".equals(response)) {
 				return Map.of("result", ApiResponse.error(Status.ERROR,
-						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(), ErrorCodeConst.MSG9002.getMessage())));
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
+								ErrorCodeConst.MSG9002.getMessage())));
+			}
+			// 拉取基站水墨屏信息
+			boolean isOver = true;
+			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
+			while (isOver) {
+				isOver = false;
+				eqList = baseStationSendApi
+						.getEslResult(Arrays.asList(restInputAssembleCard.getRestCardInfo().getCardInfo()));
+				if (CollectionUtils.isEmpty(eqList)) {
+					return Map.of("result", ApiResponse.error(Status.ERROR,
+							new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
+									ErrorCodeConst.MSG9002.getMessage())));
+				}
+				for (int i = 0; i < eqList.size(); i++) {
+					if ((Integer) eqList.get(i).get("action") != 0 && (Integer) eqList.get(i).get("action") != 200) {
+						isOver = true;
+					}
+				}
+				Thread.sleep(500);
+
+			}
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < eqList.size(); i++) {
+				if ((Integer) eqList.get(i).get("action") != 0) {
+					sb.append(eqList.get(i).get("esl_code"));
+					sb.append("/");
+				}
+			}
+
+			if (sb.length() != 0) {
+				return Map.of("result", ApiResponse.error(Status.ERROR,
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
+								sb.toString() + ErrorCodeConst.MSG9002.getMessage())));
 			}
 
 			// DB更新
@@ -535,9 +638,43 @@ public class CardInfoManagementController {
 			// 基站推送
 			String response = baseStationSendApi.postRequest(restInputAssembleCard, TemplateEnum.ASSEMBLE);
 			// 基站错误
-			if (ElectronictagsConst.ESL_RESPONSE_ERROR_CODE.equals(response)) {
+			if ("1".equals(response)) {
 				return Map.of("result", ApiResponse.error(Status.ERROR,
-						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(), ErrorCodeConst.MSG9002.getMessage())));
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
+								ErrorCodeConst.MSG9002.getMessage())));
+			}
+			// 拉取基站水墨屏信息
+			boolean isOver = true;
+			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
+			while (isOver) {
+				isOver = false;
+				eqList = baseStationSendApi
+						.getEslResult(Arrays.asList(restInputAssembleCard.getRestCardInfo().getCardInfo()));
+				if (CollectionUtils.isEmpty(eqList)) {
+					return Map.of("result", ApiResponse.error(Status.ERROR,
+							new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
+									ErrorCodeConst.MSG9002.getMessage())));
+				}
+				for (int i = 0; i < eqList.size(); i++) {
+					if ((Integer) eqList.get(i).get("action") != 0 && (Integer) eqList.get(i).get("action") != 200) {
+						isOver = true;
+					}
+				}
+				Thread.sleep(500);
+
+			}
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < eqList.size(); i++) {
+				if ((Integer) eqList.get(i).get("action") != 0) {
+					sb.append(eqList.get(i).get("esl_code"));
+					sb.append("/");
+				}
+			}
+
+			if (sb.length() != 0) {
+				return Map.of("result", ApiResponse.error(Status.ERROR,
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
+								sb.toString() + ErrorCodeConst.MSG9002.getMessage())));
 			}
 
 			// DB更新
