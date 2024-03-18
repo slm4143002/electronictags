@@ -300,7 +300,6 @@ function clearValue(num) {
 }
 
 function checkItem() {
-	$('#loadingModal').modal('show');
 	const letters = new Set();
 	for (var i = 1; i <= $("#carCount").val(); i++) {
 
@@ -320,6 +319,7 @@ function checkItem() {
 		$("#carderrorInfo").text("有重复信息，请确认!")
 		return;
 	}
+	$('#loadingModal').modal('show');
 
 }
 

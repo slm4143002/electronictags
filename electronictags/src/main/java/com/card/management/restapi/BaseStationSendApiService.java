@@ -30,7 +30,7 @@ public class BaseStationSendApiService {
 
 	@Autowired
 	public PropertiesModel pmodel;
-	
+
 	// 拉取水墨屏结果状态
 	public List<java.util.LinkedHashMap> getEslResult(List<String> f3List) {
 		EslRequestQueryTemplate template = new EslRequestQueryTemplate();
@@ -40,10 +40,10 @@ public class BaseStationSendApiService {
 		template.setF1(1);
 		template.setF2(10);
 		template.setF3(f3List);
-		
-		ResponseEntity<ArrayList> result = sendPostRequest(pmodel.getApiQueryUrl(),template,ArrayList.class);
-		ArrayList<java.util.LinkedHashMap> eslResult= result.getBody();
-		
+
+		ResponseEntity<ArrayList> result = sendPostRequest(pmodel.getApiQueryUrl(), template, ArrayList.class);
+		ArrayList<java.util.LinkedHashMap> eslResult = result.getBody();
+
 		return eslResult;
 	}
 
@@ -70,7 +70,7 @@ public class BaseStationSendApiService {
 				product.setF1(rpCard.getMachineCategoryName());
 				// 台数总
 				product.setF2(rpCard.getMachineCount());
-			    // 车数当前
+				// 车数当前
 				product.setF3(cardInfo.getCardCount());
 				// 批量号
 				product.setF4(rpCard.getBatchNumber());
@@ -99,33 +99,35 @@ public class BaseStationSendApiService {
 			// 台数当前
 			pt.setF7(raCard1.getRestCardInfo().getCardCount());
 			// 电子卡片信息
-//			pt.setEsl_code(raCard1.getRestCardInfo().getCardInfo());
-//			// 组装模板
-//			pt.setTemplate_id(pmodel.getTemplateIdAssemble());
-//			ptList1.add(pt);
-//			f1.setProductTemplate(ptList1);
-//			template.setF1(f1);
+			//			pt.setEsl_code(raCard1.getRestCardInfo().getCardInfo());
+			//			// 组装模板
+			//			pt.setTemplate_id(pmodel.getTemplateIdAssemble());
+			//			ptList1.add(pt);
+			//			f1.setProductTemplate(ptList1);
+			//			template.setF1(f1);
 			break;
 		// 清屏
 		case CLEAR:
-			RestInputClearCard raCard2 = (RestInputClearCard) restInputCard;
-			List<ProductTemplate> ptList2 = new ArrayList<ProductTemplate>();
+			RestInputClearCard raCard3 = (RestInputClearCard) restInputCard;
+			List<F1Template> f3List = new ArrayList<F1Template>();
+			raCard3.getCardInfoList().forEach(cardInfo -> {
+				F1Template f3 = new F1Template();
+				// 水墨屏id
+				f3.setEsl_code(cardInfo);
+				// 筹备模板
+				f3.setTemplate_id(pmodel.getTemplateIdPreparatory());
+				Product product = new Product();
+				f3.setProduct(product);
+				f3List.add(f3);
+			});
+			template.setF1(f3List);
 
-//			raCard2.getCardInfoList().forEach(clearNumber -> {
-//				ProductClearTemplate pt2 = new ProductClearTemplate();
-//				// 电子屏ID
-//				pt2.setEsl_code(clearNumber);
-//				// 清屏模板
-//				pt2.setTemplate_id(pmodel.getTemplateIdClear());
-//				ptList2.add(pt2);
-//			});
-//			f1.setProductTemplate(ptList2);
-//			template.setF1(f1);
 			break;
 		}
-		ResponseEntity<EslResponseResult> result = sendPostRequest(pmodel.getApiUrl(),template,EslResponseResult.class);
-		EslResponseResult eslResult= result.getBody();
-		
+		ResponseEntity<EslResponseResult> result = sendPostRequest(pmodel.getApiUrl(), template,
+				EslResponseResult.class);
+		EslResponseResult eslResult = result.getBody();
+
 		return eslResult.getError_code();
 	}
 

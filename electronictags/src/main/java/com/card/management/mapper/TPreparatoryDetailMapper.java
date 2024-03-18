@@ -19,5 +19,7 @@ public interface TPreparatoryDetailMapper {
 	long selectPreparatoryDetailCount(String  batchNumber);
 	
 	long insertPreparatory(List<TPreparatoryDetail> tdList);
+	
+	int clearPreparatoryDetail(List<String> cardBindingNumberList);
 
 }

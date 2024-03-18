@@ -26,6 +26,9 @@ public interface CardInfoManagementService {
 	public int getPreparatoryDetailCount(String batchNumber);
 
 	public List<PreparatoryDetailEntity> getPreparatoryDetailBybatchNumber(String batchNumber);
+	
+	// 更新筹备
+	public void clearPreparatoryDetail(List<String> clearAssembleDetailList);
 
 	// 取得组装明细详细信息
 	public int getAssembleDetailCount(String batchNumber,String cardBindingNumber);
@@ -47,7 +50,7 @@ public interface CardInfoManagementService {
 	// 取得警告信息
 	public List<TWarningMessage> getWaringMessage();
 	
-	
+	// 更新组装
 	public void updateAssemblDdetail(TAssembleDetail assembleDetail);
 	
 	public void clearAssembleDetail(List<String> clearAssembleDetailList);

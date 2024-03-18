@@ -23,7 +23,7 @@
 		<form class="form-group" action="#" th:action="@{/createCardInfo}" th:object="${cardView}" method="post"
 			id="card_form">
 			<div class="alert alert-primary text-center" role="alert" th:if="${cardView.infoMessage}"
-				th:text="${cardView.infoMessage}" id="infoFormMsg" />
+				th:text="${cardview.infoMessage}" id="infoFormMsg" />
 			<div style="color: rgb(255, 128, 128);" th:if="${#fields.hasAnyErrors()}" id="errorFormMsg">
 				<ul>
 					<li th:each="err : ${#fields.allErrors()}" th:text="${err}" />

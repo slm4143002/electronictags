@@ -163,4 +163,10 @@ public class CardInfoManagementServiceImpl implements CardInfoManagementService 
 		
 		return list;
 	}
+
+	@Override
+	public void clearPreparatoryDetail(List<String> clearPreparatoryDetaillList) {
+		tPreparatoryDetailMapper.clearPreparatoryDetail(clearPreparatoryDetaillList);
+	}
+
 }

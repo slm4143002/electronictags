@@ -490,10 +490,10 @@
 	  </insert>
 
 	 <update id="clearAssembleDetail" parameterType="java.util.List">
-		<foreach collection="list" item="item" separator=";">
+		<foreach collection="list" item="item" index="index" open="" close="" separator=";">
 			UPDATE
 				T_ASSEMBLE_DETAIL 
-			SET card_binding_number = null 
+			<set> card_binding_number = null </set>
 			WHERE card_binding_number = #{item}
 		</foreach>
 	 </update>

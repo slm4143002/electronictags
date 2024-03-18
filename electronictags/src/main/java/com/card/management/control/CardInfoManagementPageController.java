@@ -37,6 +37,7 @@ import com.card.management.restapi.BaseStationSendApiService;
 import com.card.management.restapi.ErrorCodeConst;
 import com.card.management.restapi.TemplateEnum;
 import com.card.management.restapi.pojo.RestCardInfo;
+import com.card.management.restapi.pojo.RestInputClearCard;
 import com.card.management.restapi.pojo.RestInputPreparatoryCard;
 import com.card.management.service.CardInfoManagementService;
 import com.github.pagehelper.PageHelper;
@@ -94,7 +95,7 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 	 */
 	@GetMapping("/gotoClearCardView")
 	public String gotoClearCardView(Model model) {
-		model.addAttribute("cardview", new CardView());
+		model.addAttribute("cardView", new CardClearView());
 		return "clearcard";
 	}
 
@@ -202,7 +203,6 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 			}
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < eqList.size(); i++) {
-				System.out.println("=================-----------------)" + eqList.get(i).get("action"));
 				if ((Integer) eqList.get(i).get("action") != 0) {
 					sb.append(eqList.get(i).get("esl_code"));
 					sb.append("/");
@@ -357,5 +357,88 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 		pages.setRows(all);
 		pages.setTotal((int) pageInfo.getTotal());
 		return new ResponseEntity<Pages<TLoGradeHistory>>(pages, HttpStatus.OK);
+	}
+	
+	
+	/** 
+	 * 卡片清除
+	 *
+	 *
+	 */
+	@PostMapping("/clearCardInfo")
+	public String clearCardInfo(@Valid CardClearView cardView, BindingResult bindingResult, Model model) {
+		try {
+			if (bindingResult.hasErrors()) {
+				return "clearcard";
+			}
+
+			// 基站推送
+			List<String> f3List = new ArrayList<String>();
+			RestInputClearCard restInputClearCard = new RestInputClearCard();
+			List<String> cardInfoList = new ArrayList<String>();
+			cardView.getCardInfoList().forEach(cinfo -> {
+				cardInfoList.add(cinfo.getCardInfo());
+				f3List.add(cinfo.getCardInfo());
+			});
+			restInputClearCard.setCardInfoList(cardInfoList);
+//			String response = baseStationSendApi.postRequest(restInputClearCard, TemplateEnum.CLEAR);
+//			// 基站错误
+//			if ("1".equals(response)) {
+//				String eslErrorMessage = ErrorCodeConst.MSG9002.getMessage();
+//				ObjectError error = new ObjectError("batchNumber", eslErrorMessage);
+//				bindingResult.addError(error);
+//				return "clearcard";
+//			}
+//			// 拉取基站水墨屏信息
+//			boolean isOver = true;
+//			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
+//
+//			while (isOver) {
+//				isOver = false;
+//				eqList = baseStationSendApi.getEslResult(f3List);
+//				if (CollectionUtils.isEmpty(eqList)) {
+//					ObjectError error = new ObjectError("batchNumber", ErrorCodeConst.MSG9002.getMessage());
+//					bindingResult.addError(error);
+//					return "clearcard";
+//				}
+//				for (int i = 0; i < eqList.size(); i++) {
+//					if ((Integer) eqList.get(i).get("action") != 0 && (Integer) eqList.get(i).get("action") != 200) {
+//						isOver = true;
+//					}
+//				}
+//				Thread.sleep(500);
+//
+//			}
+//			StringBuilder sb = new StringBuilder();
+//			for (int i = 0; i < eqList.size(); i++) {
+//				if ((Integer) eqList.get(i).get("action") != 0) {
+//					sb.append(eqList.get(i).get("esl_code"));
+//					sb.append("/");
+//				}
+//			}
+//
+//			if (sb.length() != 0) {
+//				ObjectError error = new ObjectError("batchNumber", sb.toString() + ErrorCodeConst.MSG9002.getMessage());
+//				bindingResult.addError(error);
+//				return "clearcard";
+//			}
+
+			// 解绑卡片更新
+			// 组装解除
+			service.clearAssembleDetail(f3List);
+			// 筹备解除
+			service.clearPreparatoryDetail(f3List);
+	
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "clearcard";
+		}
+		CardClearView card = new CardClearView();
+		String infoMessage = messageSource.getMessage("clearCardMessage", null,
+				Locale.CHINA);
+		card.setInfoMessage(infoMessage);
+		model.addAttribute("cardView", card);
+
+		return "clearcard";
 	}
 }
