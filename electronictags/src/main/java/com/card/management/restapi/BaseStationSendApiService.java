@@ -132,7 +132,7 @@ public class BaseStationSendApiService {
 			ResponseEntity<EslResponseResult> result = sendPostRequest(pmodel.getApiUrl(), template,
 					EslResponseResult.class);
 			EslResponseResult eslResult = result.getBody();
-
+			System.out.println(eslResult.getError_msg());
 			return eslResult.getError_code();
 
 		} catch (Exception e) {

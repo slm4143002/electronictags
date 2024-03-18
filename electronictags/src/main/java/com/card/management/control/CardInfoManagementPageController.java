@@ -366,7 +366,8 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 	 *
 	 */
 	@PostMapping("/clearCardInfo")
-	public String clearCardInfo(@Valid @ModelAttribute("cardView") CardClearView cardView, BindingResult bindingResult, Model model) {
+	public String clearCardInfo(@Valid @ModelAttribute("cardView") CardClearView cardView, BindingResult bindingResult,
+			Model model) {
 		try {
 			if (bindingResult.hasErrors()) {
 				return "clearcard";
@@ -377,8 +378,10 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 			RestInputClearCard restInputClearCard = new RestInputClearCard();
 			List<String> cardInfoList = new ArrayList<String>();
 			cardView.getCardInfoList().forEach(cinfo -> {
-				cardInfoList.add(cinfo.getCardInfo());
-				f3List.add(cinfo.getCardInfo());
+				if (!StringUtils.isEmptyOrWhitespace(cinfo.getCardInfo())) {
+					cardInfoList.add(StringUtils.trim(cinfo.getCardInfo()));
+					f3List.add(cinfo.getCardInfo());
+				}
 			});
 			restInputClearCard.setCardInfoList(cardInfoList);
 			String response = baseStationSendApi.postRequest(restInputClearCard, TemplateEnum.CLEAR);
