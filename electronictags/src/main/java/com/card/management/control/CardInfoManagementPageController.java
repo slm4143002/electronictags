@@ -173,19 +173,6 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 			// 拉取基站水墨屏信息
 			boolean isOver = true;
 			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
-			//			while(isCount) {
-			//				eqList = baseStationSendApi.getEslResult(f3List);
-			//				if (CollectionUtils.isEmpty(eqList)) {
-			//					ObjectError error = new ObjectError("batchNumber", ErrorCodeConst.MSG9002.getMessage());
-			//					bindingResult.addError(error);
-			//					return "cardview";
-			//				}
-			//				if (eqList.size() == f3List.size()) {
-			//					isCount=false;
-			//				}
-			//				Thread.sleep(1000);
-			//			}
-
 			while (isOver) {
 				isOver = false;
 				eqList = baseStationSendApi.getEslResult(f3List);

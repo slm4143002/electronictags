@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.thymeleaf.util.StringUtils;
 
 import com.card.management.eleconst.ElectronictagsConst;
 import com.card.management.entity.MBatchNumber;
@@ -142,12 +143,64 @@ public class CardInfoManagementController {
 				return Map.of("result", ApiResponse.error(Status.ERROR,
 						new ErrorResponse(ErrorCodeConst.MSG1002.getCode(), batchNumberInsertMessage)));
 			}
+
 			// 基站推送
-			String response = baseStationSendApi.postRequest(restInputPreparatoryCard, TemplateEnum.PREPARATORY);
+			List<String> f3List = new ArrayList<String>();
+			RestInputPreparatoryCard eslInputPreparatoryCard = new RestInputPreparatoryCard();
+			List<RestCardInfo> cardInfoList = new ArrayList<RestCardInfo>();
+			eslInputPreparatoryCard.setBatchNumber(restInputPreparatoryCard.getBatchNumber());
+			eslInputPreparatoryCard.setMachineCategoryName(restInputPreparatoryCard.getMachineCategoryName());
+			eslInputPreparatoryCard.setCarCount(restInputPreparatoryCard.getCarCount());
+			eslInputPreparatoryCard.setMachineCount(restInputPreparatoryCard.getMachineCount());
+			eslInputPreparatoryCard.setWriteDate(restInputPreparatoryCard.getWriteDate());
+			restInputPreparatoryCard.getCardInfoList().forEach(cinfo -> {
+				if (!StringUtils.isEmptyOrWhitespace(cinfo.getCardInfo())) {
+					RestCardInfo restCardInfo = new RestCardInfo();
+					restCardInfo.setCardCount(cinfo.getCardCount());
+					restCardInfo.setCardInfo(cinfo.getCardInfo());
+					cardInfoList.add(restCardInfo);
+					f3List.add(cinfo.getCardInfo());
+				}
+			});
+			eslInputPreparatoryCard.setCardInfoList(cardInfoList);
+			String response = baseStationSendApi.postRequest(eslInputPreparatoryCard, TemplateEnum.PREPARATORY);
 			// 基站错误
 			if ("1".equals(response)) {
 				return Map.of("result", ApiResponse.error(Status.ERROR,
-						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(), ErrorCodeConst.MSG9002.getMessage())));
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
+								ErrorCodeConst.MSG9002.getMessage())));
+			}
+			// 拉取基站水墨屏信息
+			boolean isOver = true;
+			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
+			while (isOver) {
+				isOver = false;
+				eqList = baseStationSendApi.getEslResult(f3List);
+				if (CollectionUtils.isEmpty(eqList)) {
+					return Map.of("result", ApiResponse.error(Status.ERROR,
+							new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
+									ErrorCodeConst.MSG9002.getMessage())));
+				}
+				for (int i = 0; i < eqList.size(); i++) {
+					if ((Integer) eqList.get(i).get("action") != 0 && (Integer) eqList.get(i).get("action") != 200) {
+						isOver = true;
+					}
+				}
+				Thread.sleep(500);
+
+			}
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < eqList.size(); i++) {
+				if ((Integer) eqList.get(i).get("action") != 0) {
+					sb.append(eqList.get(i).get("esl_code"));
+					sb.append("/");
+				}
+			}
+
+			if (sb.length() != 0) {
+				return Map.of("result", ApiResponse.error(Status.ERROR,
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
+								sb.toString() + ErrorCodeConst.MSG9002.getMessage())));
 			}
 
 			// 日期
@@ -518,7 +571,7 @@ public class CardInfoManagementController {
 	 *
 	 */
 	@PostMapping("/clear-card")
-	public Map<String, Object> clearCard(@Valid @RequestBody RestInputClearCard restInputClearCard,
+	public Map<String, Object> clearCard(@Valid @RequestBody RestInputClearCard inputClearCard,
 			BindingResult bindingResult) {
 		try {
 			if (bindingResult.hasErrors()) {
@@ -533,14 +586,60 @@ public class CardInfoManagementController {
 			}
 
 			// 基站推送
+			List<String> f3List = new ArrayList<String>();
+			RestInputClearCard restInputClearCard = new RestInputClearCard();
+			List<String> cardInfoList = new ArrayList<String>();
+			inputClearCard.getCardInfoList().forEach(cinfo -> {
+				if (!StringUtils.isEmptyOrWhitespace(cinfo)) {
+					cardInfoList.add(StringUtils.trim(cinfo));
+					f3List.add(cinfo);
+				}
+			});
+			restInputClearCard.setCardInfoList(cardInfoList);
 			String response = baseStationSendApi.postRequest(restInputClearCard, TemplateEnum.CLEAR);
 			// 基站错误
-			if (ElectronictagsConst.ESL_RESPONSE_ERROR_CODE.equals(response)) {
+			if ("1".equals(response)) {
 				return Map.of("result", ApiResponse.error(Status.ERROR,
 						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(), ErrorCodeConst.MSG9002.getMessage())));
 			}
+			// 拉取基站水墨屏信息
+			boolean isOver = true;
+			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
 
-			service.clearAssembleDetail(restInputClearCard.getCardInfoList());
+			while (isOver) {
+				isOver = false;
+				eqList = baseStationSendApi.getEslResult(f3List);
+				if (CollectionUtils.isEmpty(eqList)) {
+					return Map.of("result", ApiResponse.error(Status.ERROR,
+							new ErrorResponse(ErrorCodeConst.MSG9002.getCode(), ErrorCodeConst.MSG9002.getMessage())));
+				}
+				for (int i = 0; i < eqList.size(); i++) {
+					if ((Integer) eqList.get(i).get("action") != 0 && (Integer) eqList.get(i).get("action") != 200) {
+						isOver = true;
+					}
+				}
+				Thread.sleep(500);
+
+			}
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < eqList.size(); i++) {
+				if ((Integer) eqList.get(i).get("action") != 0) {
+					sb.append(eqList.get(i).get("esl_code"));
+					sb.append("/");
+				}
+			}
+
+			if (sb.length() != 0) {
+				return Map.of("result", ApiResponse.error(Status.ERROR,
+						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
+								sb.toString() + ErrorCodeConst.MSG9002.getMessage())));
+			}
+
+			// 解绑卡片更新
+			// 组装解除
+			service.clearAssembleDetail(f3List);
+			// 筹备解除
+			service.clearPreparatoryDetail(f3List);
 
 			return Map.of("result", ApiResponse.success(Status.SUCCESS,
 					new ErrorResponse(ErrorCodeConst.MSG6001.getCode(), ErrorCodeConst.MSG6001.getMessage())));
