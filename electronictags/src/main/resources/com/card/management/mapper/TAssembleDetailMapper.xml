@@ -454,12 +454,6 @@
 		    t_assemble_detail as detail 
 		    inner join m_batch_number as batch 
 		        on detail.batch_number = batch.batch_number 
-		        and batch.write_date = detail.write_date 
-		    inner join t_batch_process_result_confirm as process_result 
-		        on detail.batch_number = process_result.batch_number 
-		        and detail.write_date = process_result.write_date 
-		        and detail.card_binding_number = process_result.card_binding_number
-
 		<where>
 			<if test="batchNumber != null">
 				detail.batch_number = #{batchNumber}
@@ -491,10 +485,10 @@
 
 	 <update id="clearAssembleDetail" parameterType="java.util.List">
 		<foreach collection="list" item="item" index="index" open="" close="" separator=";">
-			UPDATE
-				T_ASSEMBLE_DETAIL 
+			update
+				t_assemble_detail 
 			<set> card_binding_number = null </set>
-			WHERE card_binding_number = #{item}
+			where card_binding_number = #{item}
 		</foreach>
 	 </update>
 	  

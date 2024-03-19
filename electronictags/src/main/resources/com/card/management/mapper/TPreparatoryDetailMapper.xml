@@ -84,12 +84,12 @@
 	</insert>
 	<update id="clearPreparatoryDetail" parameterType="java.util.List">
 		<foreach collection="list" item="item" index="index" open="" close="" separator=";">
-			UPDATE
-			T_PREPARATORY_DETAIL
+			update
+			t_preparatory_detail
 			<set>
 				card_binding_number = null
 			</set>
-			WHERE card_binding_number = #{item}
+			where card_binding_number = #{item}
 		</foreach>
 	</update>
 </mapper>

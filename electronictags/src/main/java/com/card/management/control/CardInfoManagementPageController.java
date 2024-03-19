@@ -371,7 +371,7 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 				}
 			});
 			restInputClearCard.setCardInfoList(cardInfoList);
-			String response = baseStationSendApi.postRequest(restInputClearCard, TemplateEnum.CLEAR);
+			 String response = baseStationSendApi.postRequest(restInputClearCard, TemplateEnum.CLEAR);
 			// 基站错误
 			if ("1".equals(response)) {
 				String eslErrorMessage = ErrorCodeConst.MSG9002.getMessage();
