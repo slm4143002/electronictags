@@ -99,13 +99,13 @@ public class BaseStationSendApiService {
 				// 机种名称
 				product1.setF1(raCard1.getMachineCategoryName());
 				// 组装结果
-				product1.setF2(EslEnum.getResultLabelOK(raCard1.getAssembleResult()));
+				product1.setF2(raCard1.getAssembleResult());
 				// 接地结果
-				product1.setF3(EslEnum.getResultLabelOK(raCard1.getGroundConnectionResult()));
+				product1.setF3(raCard1.getGroundConnectionResult());
 				// 耐压结果
-				product1.setF4(EslEnum.getResultLabelOK(raCard1.getWithstandVoltageResult()));
+				product1.setF4(raCard1.getWithstandVoltageResult());
 				// UT结果
-				product1.setF5(EslEnum.getResultLabelOK(raCard1.getUtResult()));
+				product1.setF5(raCard1.getUtResult());
 				// 组装批量号
 				product1.setF6(raCard1.getBatchNumber());
 				// 车数当前

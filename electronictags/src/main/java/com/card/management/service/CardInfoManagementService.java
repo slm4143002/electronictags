@@ -9,6 +9,7 @@ import com.card.management.entity.AssembleDetailEntity;
 import com.card.management.entity.MBatchNumber;
 import com.card.management.entity.PreparatoryDetailEntity;
 import com.card.management.entity.TAssembleDetail;
+import com.card.management.entity.TBatchProcessResultConfirm;
 import com.card.management.entity.TLoGradeHistory;
 import com.card.management.entity.TPreparatoryDetail;
 import com.card.management.entity.TWarningMessage;
@@ -35,6 +36,9 @@ public interface CardInfoManagementService {
 
 	public List<AssembleDetailEntity> getAssembleDetailBybatchNumber(String batchNumber);
 
+	// L/O品履历信息登录
+	public void insertHistory(TLoGradeHistory history);
+	
 	// 取得L/O品履历信息
 	public int getLoGradeHistoryCount();
 
@@ -56,5 +60,12 @@ public interface CardInfoManagementService {
 	public void clearAssembleDetail(List<String> clearAssembleDetailList);
 	
 	public List<TAssembleDetail> getBatchNumberBybingNumber(String cardBindingNumber);
+	
+	
+	// 处理结果登录
+	public void insertBatchProcessResultConfirm(TBatchProcessResultConfirm history);
+	
+	// 取得处理结果信息
+	public  List<TBatchProcessResultConfirm> getBatchProcessResultConfirm(String batchNumber);
 
 }

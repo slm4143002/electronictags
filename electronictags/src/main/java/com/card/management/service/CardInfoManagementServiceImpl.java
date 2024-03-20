@@ -17,6 +17,8 @@ import com.card.management.entity.MBatchNumberExample;
 import com.card.management.entity.PreparatoryDetailEntity;
 import com.card.management.entity.TAssembleDetail;
 import com.card.management.entity.TAssembleDetailExample;
+import com.card.management.entity.TBatchProcessResultConfirm;
+import com.card.management.entity.TBatchProcessResultConfirmExample;
 import com.card.management.entity.TLoGradeHistory;
 import com.card.management.entity.TLoGradeHistoryExample;
 import com.card.management.entity.TPreparatoryDetail;
@@ -24,6 +26,7 @@ import com.card.management.entity.TWarningMessage;
 import com.card.management.entity.TWarningMessageExample;
 import com.card.management.mapper.MBatchNumberMapper;
 import com.card.management.mapper.TAssembleDetailMapper;
+import com.card.management.mapper.TBatchProcessResultConfirmMapper;
 import com.card.management.mapper.TLoGradeHistoryMapper;
 import com.card.management.mapper.TPreparatoryDetailMapper;
 import com.card.management.mapper.TWarningMessageMapper;
@@ -49,6 +52,9 @@ public class CardInfoManagementServiceImpl implements CardInfoManagementService 
 	
 	@Autowired
 	private TWarningMessageMapper tWarningMessageMapper;
+	
+	@Autowired
+	private TBatchProcessResultConfirmMapper tBatchProcessResultConfirmMapper;
 
 
 	@Override
@@ -168,5 +174,26 @@ public class CardInfoManagementServiceImpl implements CardInfoManagementService 
 	public void clearPreparatoryDetail(List<String> clearPreparatoryDetaillList) {
 		tPreparatoryDetailMapper.clearPreparatoryDetail(clearPreparatoryDetaillList);
 	}
+
+	@Override
+	public void insertHistory(TLoGradeHistory history) {
+		tLoGradeHistoryMapper.insert(history);
+	}
+
+	@Override
+	public void insertBatchProcessResultConfirm(TBatchProcessResultConfirm batchProcessResultConfirm) {
+		tBatchProcessResultConfirmMapper.insert(batchProcessResultConfirm);
+	}
+
+	@Override
+	public List<TBatchProcessResultConfirm> getBatchProcessResultConfirm(String batchNumber) {
+		TBatchProcessResultConfirmExample example = new TBatchProcessResultConfirmExample();
+		example.createCriteria().andCardBindingNumberEqualTo(batchNumber);
+		List<TBatchProcessResultConfirm> list = tBatchProcessResultConfirmMapper.selectByExample(example);
+		
+		return list;
+	}
+
+	
 
 }

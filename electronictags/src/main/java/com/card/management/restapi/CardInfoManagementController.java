@@ -31,6 +31,8 @@ import org.thymeleaf.util.StringUtils;
 import com.card.management.eleconst.ElectronictagsConst;
 import com.card.management.entity.MBatchNumber;
 import com.card.management.entity.TAssembleDetail;
+import com.card.management.entity.TBatchProcessResultConfirm;
+import com.card.management.entity.TLoGradeHistory;
 import com.card.management.entity.TPreparatoryDetail;
 import com.card.management.restapi.ApiResponse.Status;
 import com.card.management.restapi.pojo.BatchProccessResult;
@@ -320,7 +322,7 @@ public class CardInfoManagementController {
 			// 批量号
 			entity.setBatchNumber(restInputAssembleCard.getBatchNumber());
 			// 台数
-			entity.setPieceTimes(Integer.parseInt(cardInfo.getCardCount()));
+			entity.setPieceTimes(Integer.parseInt(parseCarCount(cardInfo.getCardCount())));
 			// 日期
 			entity.setWriteDate(mbn.getWriteDate());
 			// 组装OK
@@ -382,7 +384,7 @@ public class CardInfoManagementController {
 						new ErrorResponse(ErrorCodeConst.MSG1006.getCode(), ErrorCodeConst.MSG1006.getMessage())));
 			}
 
-			MBatchNumber mbn = service.getCards(tadl.getCardBindingNumber());
+			MBatchNumber mbn = service.getCards(tadl.getBatchNumber());
 			RestInputAssembleCard restInputAssembleCard = new RestInputAssembleCard();
 			RestCardInfo restCardInfo = new RestCardInfo();
 			// 电子卡信息
@@ -391,6 +393,7 @@ public class CardInfoManagementController {
 			restCardInfo.setCardCount("" + tadl.getPieceTimes() + "/" + mbn.getMachineCount());
 			restInputAssembleCard.setRestCardInfo(restCardInfo);
 			restInputAssembleCard.setBatchNumber(tadl.getBatchNumber());
+			restInputAssembleCard.setMachineCategoryName(mbn.getMachineCategoryName());
 			restInputAssembleCard.setAssembleResult(EslEnum.ASSEMBLE_RESULT.getResultLabelOK());
 			if (EslEnum.GROUND_CONNECTION_RESULT.getResultOK().equals(restInputGroundConnection.getCheckResult())) {
 				restInputAssembleCard.setGroundConnectionResult(EslEnum.GROUND_CONNECTION_RESULT.getResultLabelOK());
@@ -446,6 +449,21 @@ public class CardInfoManagementController {
 			tad.setGroundConnectionResult(restInputGroundConnection.getCheckResult());
 			service.updateAssemblDdetail(tad);
 
+			if (!EslEnum.GROUND_CONNECTION_RESULT.getResultOK().equals(restInputGroundConnection.getCheckResult())) {
+				TLoGradeHistory history = new TLoGradeHistory();
+				history.setBatchNumber(mbn.getBatchNumber());
+				history.setMachineCategoryName(mbn.getMachineCategoryName());
+				// 日期
+				DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+				history.setWriteDate(formatter.format(mbn.getWriteDate()));
+				history.setCardBindingNumber(restInputGroundConnection.getCardInfo());
+				history.setProcessCategory("2");
+				history.setProcessResult("1");
+				history.setCreateDate(new Date());
+				history.setUpdateDate(new Date());
+				service.insertHistory(history);
+			}
+
 			return Map.of("result", ApiResponse.success(Status.SUCCESS,
 					new ErrorResponse(ErrorCodeConst.MSG6001.getCode(), ErrorCodeConst.MSG6001.getMessage())));
 
@@ -495,7 +513,7 @@ public class CardInfoManagementController {
 						new ErrorResponse(ErrorCodeConst.MSG1005.getCode(), ErrorCodeConst.MSG1005.getMessage())));
 			}
 
-			MBatchNumber mbn = service.getCards(tadl.getCardBindingNumber());
+			MBatchNumber mbn = service.getCards(tadl.getBatchNumber());
 			RestInputAssembleCard restInputAssembleCard = new RestInputAssembleCard();
 			RestCardInfo restCardInfo = new RestCardInfo();
 			// 电子卡信息
@@ -504,15 +522,16 @@ public class CardInfoManagementController {
 			restCardInfo.setCardCount("" + tadl.getPieceTimes() + "/" + mbn.getMachineCount());
 			restInputAssembleCard.setRestCardInfo(restCardInfo);
 			restInputAssembleCard.setBatchNumber(tadl.getBatchNumber());
+			restInputAssembleCard.setMachineCategoryName(mbn.getMachineCategoryName());
 			// 组装
 			restInputAssembleCard.setAssembleResult(EslEnum.ASSEMBLE_RESULT.getResultLabelOK());
 			// 接地
 			restInputAssembleCard.setGroundConnectionResult(EslEnum.GROUND_CONNECTION_RESULT.getResultLabelOK());
 			// 耐压
 			if (EslEnum.WITHSTAND_VOLTAGE_RESULT.getResultOK().equals(restInputWithstandVoltage.getCheckResult())) {
-				restInputAssembleCard.setGroundConnectionResult(EslEnum.WITHSTAND_VOLTAGE_RESULT.getResultLabelOK());
+				restInputAssembleCard.setWithstandVoltageResult(EslEnum.WITHSTAND_VOLTAGE_RESULT.getResultLabelOK());
 			} else {
-				restInputAssembleCard.setGroundConnectionResult(EslEnum.WITHSTAND_VOLTAGE_RESULT.getResultLabelNG());
+				restInputAssembleCard.setWithstandVoltageResult(EslEnum.WITHSTAND_VOLTAGE_RESULT.getResultLabelNG());
 			}
 
 			// 基站推送
@@ -562,6 +581,21 @@ public class CardInfoManagementController {
 			tad.setCardBindingNumber(restInputWithstandVoltage.getCardInfo());
 			tad.setWithstandVoltageResult(restInputWithstandVoltage.getCheckResult());
 			service.updateAssemblDdetail(tad);
+
+			if (!EslEnum.WITHSTAND_VOLTAGE_RESULT.getResultOK().equals(restInputWithstandVoltage.getCheckResult())) {
+				TLoGradeHistory history = new TLoGradeHistory();
+				history.setBatchNumber(mbn.getBatchNumber());
+				history.setMachineCategoryName(mbn.getMachineCategoryName());
+				// 日期
+				DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+				history.setWriteDate(formatter.format(mbn.getWriteDate()));
+				history.setCardBindingNumber(restInputWithstandVoltage.getCardInfo());
+				history.setProcessCategory("3");
+				history.setProcessResult("1");
+				history.setCreateDate(new Date());
+				history.setUpdateDate(new Date());
+				service.insertHistory(history);
+			}
 
 			return Map.of("result", ApiResponse.success(Status.SUCCESS,
 					new ErrorResponse(ErrorCodeConst.MSG6001.getCode(), ErrorCodeConst.MSG6001.getMessage())));
@@ -613,7 +647,7 @@ public class CardInfoManagementController {
 						new ErrorResponse(ErrorCodeConst.MSG1004.getCode(), ErrorCodeConst.MSG1004.getMessage())));
 			}
 
-			MBatchNumber mbn = service.getCards(tadl.getCardBindingNumber());
+			MBatchNumber mbn = service.getCards(tadl.getBatchNumber());
 			RestInputAssembleCard restInputAssembleCard = new RestInputAssembleCard();
 			RestCardInfo restCardInfo = new RestCardInfo();
 			// 电子卡信息
@@ -622,6 +656,7 @@ public class CardInfoManagementController {
 			restCardInfo.setCardCount("" + tadl.getPieceTimes() + "/" + mbn.getMachineCount());
 			restInputAssembleCard.setRestCardInfo(restCardInfo);
 			restInputAssembleCard.setBatchNumber(tadl.getBatchNumber());
+			restInputAssembleCard.setMachineCategoryName(mbn.getMachineCategoryName());
 			// 组装
 			restInputAssembleCard.setAssembleResult(EslEnum.ASSEMBLE_RESULT.getResultLabelOK());
 			// 接地
@@ -683,11 +718,53 @@ public class CardInfoManagementController {
 			tad.setUtResult(restInputUt.getCheckResult());
 			tad.setTicketInfo(restInputUt.getTicketInfo());
 			service.updateAssemblDdetail(tad);
+			// 日期
+			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-			if ("1".equals(restInputUt.getCheckResult())) {
+			// lo品登录
+			if (!EslEnum.UT_RESULT.getResultOK().equals(restInputUt.getCheckResult())) {
+				TLoGradeHistory history = new TLoGradeHistory();
+				history.setBatchNumber(mbn.getBatchNumber());
+				history.setMachineCategoryName(mbn.getMachineCategoryName());
+				history.setWriteDate(formatter.format(mbn.getWriteDate()));
+				history.setCardBindingNumber(restInputUt.getCardInfo());
+				history.setProcessCategory("4");
+				history.setProcessResult("1");
+				history.setCreateDate(new Date());
+				history.setUpdateDate(new Date());
+				service.insertHistory(history);
+			}
+			boolean isOverResult = false;
+			if (EslEnum.UT_RESULT.getResultOK().equals(restInputUt.getCheckResult())) {
+				// 处理结果查询
+				List<TBatchProcessResultConfirm> batchProcessResultConfirmList = service
+						.getBatchProcessResultConfirm(mbn.getBatchNumber());
+				if (!CollectionUtils.isEmpty(batchProcessResultConfirmList)) {
+					if (mbn.getMachineCount() == (batchProcessResultConfirmList.size() + 1)) {
+						isOverResult = true;
+					}
+				}
+
+				// 处理结果登录
+				TBatchProcessResultConfirm bprc = new TBatchProcessResultConfirm();
+				bprc.setBatchNumber(mbn.getBatchNumber());
+				bprc.setCardBindingNumber(response);
+				bprc.setCarTimes(tadl.getPieceTimes());
+				bprc.setCheckResult(1);
+				bprc.setWriteDate(mbn.getWriteDate());
+				bprc.setProjectCategory("2");
+				bprc.setUpdateDate(new Date());
+				bprc.setCreateDate(new Date());
+				service.insertBatchProcessResultConfirm(bprc);
+
 				BatchProccessResult bp = new BatchProccessResult();
 				bp.setBatchNumber(tadl.getBatchNumber());
-				return Map.of("result", ApiResponse.success(Status.SUCCESS, bp));
+				if (isOverResult) {
+					return Map.of("result", ApiResponse.success(Status.SUCCESS, bp));
+				} else {
+					return Map.of("result", ApiResponse.success(Status.SUCCESS, null));
+				}
+
 			} else {
 				return Map.of("result", ApiResponse.success(Status.SUCCESS, null));
 			}
@@ -699,7 +776,6 @@ public class CardInfoManagementController {
 			return Map.of("result", ApiResponse.error(Status.ERROR,
 					new ErrorResponse(ErrorCodeConst.MSG9001.getCode(), sw.toString())));
 		}
-
 	}
 
 	/** 
@@ -789,5 +865,20 @@ public class CardInfoManagementController {
 					new ErrorResponse(ErrorCodeConst.MSG9001.getCode(), sw.toString())));
 		}
 
+	}
+
+	/**
+	 * 1/5 
+	 * @param card
+	 * @return
+	 */
+	private String parseCarCount(String card) {
+		String[] cardArray = new String[2];
+		try {
+			cardArray = card.split("/");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return cardArray[0];
 	}
 }

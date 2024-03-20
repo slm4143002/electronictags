@@ -1,5 +1,7 @@
 package com.card.management.restapi;
 
+import org.thymeleaf.util.StringUtils;
+
 public enum EslEnum {
 	//组装 接地 耐压 UT
 	ASSEMBLE_RESULT("OK", "NG", "1", "0"), GROUND_CONNECTION_RESULT("OK", "NG", "1",
@@ -32,15 +34,15 @@ public enum EslEnum {
 	public String getResultNG() {
 		return resultNG;
 	}
-	
+
 	public static String getResultLabelOK(String result) {
-        for (EslEnum e : EslEnum.values()) {
-            if (e.getResultOK().equals(result)) {
-                return e.getResultLabelOK();
-            } else {
-            	 return e.getResultLabelNG();
-            }
-        }
-        return "";
-    }
+		for (EslEnum e : EslEnum.values()) {
+			if (StringUtils.isEmpty(result) || e.getResultOK().equals(result)) {
+				return e.getResultLabelOK();
+			} else {
+				return e.getResultLabelNG();
+			}
+		}
+		return "";
+	}
 }

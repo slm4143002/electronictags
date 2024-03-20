@@ -446,14 +446,16 @@
 		    , case when detail.ut_result then '完成' else '' end as ut_result
 		    , case when detail.piece_times then '完成' else '' end as piece_times
 		    , case 
-		        when check_result 
+		        when result.check_result 
 		            then '完成' 
 		        else '未完成' 
 		        end as check_result 
 		from
 		    t_assemble_detail as detail 
 		    inner join m_batch_number as batch 
-		        on detail.batch_number = batch.batch_number 
+		        on detail.batch_number = batch.batch_number
+		    left join t_batch_process_result_confirm as result
+		    	on batch.batch_number = result.batch_number
 		<where>
 			<if test="batchNumber != null">
 				detail.batch_number = #{batchNumber}
