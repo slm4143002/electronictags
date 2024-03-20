@@ -30,7 +30,7 @@
      
     </javaClientGenerator>
 
-    <table schema="card" tableName="t_warning_message" >
+    <table schema="card" tableName="t_batch_process_result_confirm" >
       
     </table>
 

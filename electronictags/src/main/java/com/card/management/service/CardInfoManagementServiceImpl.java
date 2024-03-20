@@ -188,10 +188,18 @@ public class CardInfoManagementServiceImpl implements CardInfoManagementService 
 	@Override
 	public List<TBatchProcessResultConfirm> getBatchProcessResultConfirm(String batchNumber) {
 		TBatchProcessResultConfirmExample example = new TBatchProcessResultConfirmExample();
-		example.createCriteria().andCardBindingNumberEqualTo(batchNumber);
+		example.createCriteria().andBatchNumberEqualTo(batchNumber);
 		List<TBatchProcessResultConfirm> list = tBatchProcessResultConfirmMapper.selectByExample(example);
 		
 		return list;
+	}
+
+	@Override
+	public void updateBatchProcessResultConfirm(TBatchProcessResultConfirm history) {
+		TBatchProcessResultConfirmExample example = new TBatchProcessResultConfirmExample();
+		example.createCriteria().andBatchNumberEqualTo(history.getBatchNumber());
+		tBatchProcessResultConfirmMapper.updateByExample(history, example);
+		
 	}
 
 	

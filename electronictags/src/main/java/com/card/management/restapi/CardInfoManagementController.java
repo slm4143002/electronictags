@@ -273,7 +273,7 @@ public class CardInfoManagementController {
 				return Map.of("result", ApiResponse.error(Status.ERROR,
 						new ErrorResponse(ErrorCodeConst.MSG1002.getCode(), batchNumberInsertMessage)));
 			}
-
+			restInputAssembleCard.setAssembleResult(EslEnum.ASSEMBLE_RESULT.getResultLabelOK());
 			// 基站推送
 			String response = baseStationSendApi.postRequest(restInputAssembleCard, TemplateEnum.ASSEMBLE);
 			// 基站错误
@@ -665,9 +665,9 @@ public class CardInfoManagementController {
 			restInputAssembleCard.setWithstandVoltageResult(EslEnum.WITHSTAND_VOLTAGE_RESULT.getResultLabelOK());
 			// UT
 			if (EslEnum.UT_RESULT.getResultOK().equals(restInputUt.getCheckResult())) {
-				restInputAssembleCard.setGroundConnectionResult(EslEnum.UT_RESULT.getResultLabelOK());
+				restInputAssembleCard.setUtResult(EslEnum.UT_RESULT.getResultLabelOK());
 			} else {
-				restInputAssembleCard.setGroundConnectionResult(EslEnum.UT_RESULT.getResultLabelNG());
+				restInputAssembleCard.setUtResult(EslEnum.UT_RESULT.getResultLabelNG());
 			}
 
 			// 基站推送
@@ -748,9 +748,9 @@ public class CardInfoManagementController {
 				// 处理结果登录
 				TBatchProcessResultConfirm bprc = new TBatchProcessResultConfirm();
 				bprc.setBatchNumber(mbn.getBatchNumber());
-				bprc.setCardBindingNumber(response);
 				bprc.setCarTimes(tadl.getPieceTimes());
-				bprc.setCheckResult(1);
+				bprc.setTicketInfo(restInputUt.getTicketInfo());
+				bprc.setCheckResult("1");
 				bprc.setWriteDate(mbn.getWriteDate());
 				bprc.setProjectCategory("2");
 				bprc.setUpdateDate(new Date());
@@ -762,11 +762,13 @@ public class CardInfoManagementController {
 				if (isOverResult) {
 					return Map.of("result", ApiResponse.success(Status.SUCCESS, bp));
 				} else {
-					return Map.of("result", ApiResponse.success(Status.SUCCESS, null));
+					return Map.of("result", ApiResponse.success(Status.SUCCESS,
+							new ErrorResponse(ErrorCodeConst.MSG6001.getCode(), ErrorCodeConst.MSG6001.getMessage())));
 				}
 
 			} else {
-				return Map.of("result", ApiResponse.success(Status.SUCCESS, null));
+				return Map.of("result", ApiResponse.success(Status.SUCCESS,
+						new ErrorResponse(ErrorCodeConst.MSG6001.getCode(), ErrorCodeConst.MSG6001.getMessage())));
 			}
 
 		} catch (Exception e) {

@@ -67,5 +67,7 @@ public interface CardInfoManagementService {
 	
 	// 取得处理结果信息
 	public  List<TBatchProcessResultConfirm> getBatchProcessResultConfirm(String batchNumber);
+	// 更新处理结果信息
+	public void updateBatchProcessResultConfirm(TBatchProcessResultConfirm history);
 
 }

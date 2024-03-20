@@ -456,7 +456,7 @@
 		    inner join m_batch_number as batch 
 		        on detail.batch_number = batch.batch_number
 		    left join t_batch_process_result_confirm as result
-		    	on batch.batch_number = result.batch_number
+		    	on batch.batch_number = result.batch_number and  result.ticket_info = detail.ticket_info
 		<where>
 			<if test="batchNumber != null">
 				detail.batch_number = #{batchNumber}
