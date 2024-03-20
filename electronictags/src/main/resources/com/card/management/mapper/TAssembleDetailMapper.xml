@@ -15,6 +15,7 @@
     <result column="assemble_result" jdbcType="CHAR" property="assembleResult" />
     <result column="ground_connection_result" jdbcType="CHAR" property="groundConnectionResult" />
     <result column="withstand_voltage_result" jdbcType="CHAR" property="withstandVoltageResult" />
+    <result column="piece_times" jdbcType="TINYINT" property="pieceTimes" />
     <result column="ut_result" jdbcType="CHAR" property="utResult" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
@@ -94,7 +95,7 @@
       This element was generated on Tue Mar 12 22:53:59 CST 2024.
     -->
     id, batch_number, write_date, card_binding_number, ticket_info, assemble_result, 
-    ground_connection_result, withstand_voltage_result, ut_result, update_date, create_date
+    ground_connection_result, withstand_voltage_result, ut_result, piece_times,update_date, create_date
   </sql>
   <select id="selectByExample" parameterType="com.card.management.entity.TAssembleDetailExample" resultMap="BaseResultMap">
     <!--
