@@ -69,5 +69,9 @@ public interface CardInfoManagementService {
 	public  List<TBatchProcessResultConfirm> getBatchProcessResultConfirm(String batchNumber);
 	// 更新处理结果信息
 	public void updateBatchProcessResultConfirm(TBatchProcessResultConfirm history);
+	
+	// check水墨屏是否已经被使用
+	public List<AssembleDetailEntity> checkAssembleBinNumber(List<String> bingNumberList);
+	public List<PreparatoryDetailEntity> checkPreparatoryBinNumber(List<String> bingNumberList);
 
 }

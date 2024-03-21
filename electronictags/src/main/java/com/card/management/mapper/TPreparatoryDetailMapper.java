@@ -21,5 +21,7 @@ public interface TPreparatoryDetailMapper {
 	long insertPreparatory(List<TPreparatoryDetail> tdList);
 	
 	int clearPreparatoryDetail(List<String> cardBindingNumberList);
+	
+	List<PreparatoryDetailEntity> checkPreparatoryBinNumber(List<String> cardBindingNumberList);
 
 }

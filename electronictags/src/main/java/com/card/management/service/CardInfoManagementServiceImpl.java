@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.thymeleaf.util.StringUtils;
 
@@ -126,9 +127,16 @@ public class CardInfoManagementServiceImpl implements CardInfoManagementService 
 	}
 
 	@Override
+	@Transactional
 	public long createBatchNumberPreparatoryDetail(
 			List<TPreparatoryDetail> preparatoryDetailEntityList) {
-		long result = tPreparatoryDetailMapper.insertPreparatory(preparatoryDetailEntityList);
+		long result=0;
+		try {
+			result = tPreparatoryDetailMapper.insertPreparatory(preparatoryDetailEntityList);
+		}catch(Exception e) {
+			throw new RuntimeException();
+		}
+		
 		return result;
 	}
 
@@ -200,6 +208,18 @@ public class CardInfoManagementServiceImpl implements CardInfoManagementService 
 		example.createCriteria().andBatchNumberEqualTo(history.getBatchNumber());
 		tBatchProcessResultConfirmMapper.updateByExample(history, example);
 		
+	}
+
+	@Override
+	public List<AssembleDetailEntity> checkAssembleBinNumber(List<String> bingNumberList) {
+		List<AssembleDetailEntity> list = tAssembleDetailMapper.checkAssembleBinNumber(bingNumberList);
+		return list;
+	}
+
+	@Override
+	public List<PreparatoryDetailEntity> checkPreparatoryBinNumber(List<String> bingNumberList) {
+		List<PreparatoryDetailEntity> list = tPreparatoryDetailMapper.checkPreparatoryBinNumber(bingNumberList);
+		return list;
 	}
 
 	

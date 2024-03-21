@@ -29,7 +29,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.thymeleaf.util.StringUtils;
 
 import com.card.management.eleconst.ElectronictagsConst;
+import com.card.management.entity.AssembleDetailEntity;
 import com.card.management.entity.MBatchNumber;
+import com.card.management.entity.PreparatoryDetailEntity;
 import com.card.management.entity.TAssembleDetail;
 import com.card.management.entity.TBatchProcessResultConfirm;
 import com.card.management.entity.TLoGradeHistory;
@@ -165,6 +167,31 @@ public class CardInfoManagementController {
 					f3List.add(cinfo.getCardInfo());
 				}
 			});
+
+			// check水墨屏是否被使用
+			List<PreparatoryDetailEntity> list1 = service.checkPreparatoryBinNumber(f3List);
+			List<AssembleDetailEntity> list2 = service.checkAssembleBinNumber(f3List);
+			StringBuilder sb0 = new StringBuilder();
+			if (CollectionUtils.isEmpty(list1) && CollectionUtils.isEmpty(list2)) {
+			} else {
+				if (!CollectionUtils.isEmpty(list1)) {
+					for (int i = 0; i < list1.size(); i++) {
+						sb0.append(list1.get(i).getCardBindingNumber());
+						sb0.append("/");
+					}
+				}
+				if (!CollectionUtils.isEmpty(list2)) {
+					for (int i = 0; i < list2.size(); i++) {
+						sb0.append(list2.get(i).getCardBindingNumber());
+						sb0.append("/");
+					}
+				}
+
+				return Map.of("result", ApiResponse.error(Status.ERROR,
+						new ErrorResponse(ErrorCodeConst.MSG1007.getCode(),
+								sb0.toString() + ErrorCodeConst.MSG1007.getMessage())));
+			}
+
 			eslInputPreparatoryCard.setCardInfoList(cardInfoList);
 			String response = baseStationSendApi.postRequest(eslInputPreparatoryCard, TemplateEnum.PREPARATORY);
 			// 基站错误
@@ -213,18 +240,27 @@ public class CardInfoManagementController {
 			// 筹备信息取得
 			List<RestCardInfo> cardInfo = restInputPreparatoryCard.getCardInfoList();
 			List<TPreparatoryDetail> preparatoryDetailInfoList = new ArrayList<>();
-			cardInfo.forEach(card -> {
+			for (int k = 0; k < cardInfo.size(); k++) {
 				TPreparatoryDetail entity = new TPreparatoryDetail();
+				if (StringUtils.isEmpty(cardInfo.get(k).getCardInfo())
+						&& StringUtils.isEmpty(cardInfo.get(k).getCardCount())) {
+					continue;
+				} else if (StringUtils.isEmpty(cardInfo.get(k).getCardInfo())
+						|| StringUtils.isEmpty(cardInfo.get(k).getCardCount())) {
+					Map.of("result", ApiResponse.error(Status.ERROR,
+							new ErrorResponse(ErrorCodeConst.MSG1008.getCode(), ErrorCodeConst.MSG1008.getMessage())));
+				}
 				// 电子卡绑定信息
-				entity.setCardBindingNumber(card.getCardInfo());
+				entity.setCardBindingNumber(cardInfo.get(k).getCardInfo());
 				// 车数
-				entity.setCarTimes(Integer.parseInt(card.getCardCount()));
+				entity.setCarTimes(Integer.parseInt(cardInfo.get(k).getCardCount()));
 				// 批量号
 				entity.setBatchNumber(restInputPreparatoryCard.getBatchNumber());
 				entity.setCheckResult("1");
 				entity.setWriteDate(writeDate);
 				preparatoryDetailInfoList.add(entity);
-			});
+
+			}
 
 			service.createBatchNumberPreparatoryDetail(preparatoryDetailInfoList);
 
@@ -273,6 +309,32 @@ public class CardInfoManagementController {
 				return Map.of("result", ApiResponse.error(Status.ERROR,
 						new ErrorResponse(ErrorCodeConst.MSG1002.getCode(), batchNumberInsertMessage)));
 			}
+
+			// check水墨屏是否被使用
+			List<PreparatoryDetailEntity> list1 = service
+					.checkPreparatoryBinNumber(Arrays.asList(cardInfo.getCardInfo()));
+			List<AssembleDetailEntity> list2 = service.checkAssembleBinNumber(Arrays.asList(cardInfo.getCardInfo()));
+			StringBuilder sb0 = new StringBuilder();
+			if (CollectionUtils.isEmpty(list1) && CollectionUtils.isEmpty(list2)) {
+			} else {
+				if (!CollectionUtils.isEmpty(list1)) {
+					for (int i = 0; i < list1.size(); i++) {
+						sb0.append(list1.get(i).getCardBindingNumber());
+						sb0.append("/");
+					}
+				}
+				if (!CollectionUtils.isEmpty(list2)) {
+					for (int i = 0; i < list2.size(); i++) {
+						sb0.append(list2.get(i).getCardBindingNumber());
+						sb0.append("/");
+					}
+				}
+
+				return Map.of("result", ApiResponse.error(Status.ERROR,
+						new ErrorResponse(ErrorCodeConst.MSG1007.getCode(),
+								sb0.toString() + ErrorCodeConst.MSG1007.getMessage())));
+			}
+
 			restInputAssembleCard.setAssembleResult(EslEnum.ASSEMBLE_RESULT.getResultLabelOK());
 			// 基站推送
 			String response = baseStationSendApi.postRequest(restInputAssembleCard, TemplateEnum.ASSEMBLE);

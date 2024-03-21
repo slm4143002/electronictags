@@ -28,4 +28,6 @@ public interface TAssembleDetailMapper {
 	int clearAssembleDetail(List<String> cardBindingNumberList);
 	
 	List<TAssembleDetail> selectByExample(TAssembleDetailExample example);
+	
+	List<AssembleDetailEntity> checkAssembleBinNumber(List<String> cardBindingNumberList);
 }

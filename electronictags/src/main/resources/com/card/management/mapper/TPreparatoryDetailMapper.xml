@@ -28,10 +28,10 @@
 		count(*)
 		from t_preparatory_detail as detail inner join
 		m_batch_number as batch on
-		detail.batch_number = batch.batch_number
+		detail.batch_number  = batch.batch_number 
 		<where>
 			<if test="batchNumber != null">
-				detail.batch_number = #{batchNumber}
+				detail.batch_number   = #{batchNumber}
 			</if>
 		</where>
 	</select>
@@ -48,11 +48,11 @@
 		else '未完成' end as check_result
 		from t_preparatory_detail as detail
 		inner join m_batch_number as batch
-		on detail.batch_number =
-		batch.batch_number
+		on detail.batch_number  =
+		batch.batch_number 
 		<where>
 			<if test="batchNumber != null">
-				detail.batch_number = #{batchNumber}
+				detail.batch_number  = #{batchNumber}
 			</if>
 		</where>
 	</select>
@@ -92,4 +92,15 @@
 			where card_binding_number = #{item}
 		</foreach>
 	</update>
+
+	<select id="checkPreparatoryBinNumber" parameterType="java.util.List" resultMap="PreparatoryDetailResultMap">
+		select
+			detail.card_binding_number
+		from t_preparatory_detail as detail
+			inner join m_batch_number as batch on detail.batch_number = batch.batch_number 
+		where detail.card_binding_number  in
+		<foreach collection="list" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
 </mapper>

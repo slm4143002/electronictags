@@ -421,14 +421,14 @@
 		from
 		    t_assemble_detail as detail 
 		    inner join m_batch_number as batch 
-		        on detail.batch_number = batch.batch_number 
+		        on detail.batch_number  = batch.batch_number  
 		        and batch.write_date = detail.write_date 
 		<where>
 			<if test="batchNumber != null">
-				detail.batch_number = #{batchNumber}
+				detail.batch_number  = #{batchNumber}
 			</if>
 			<if test="cardBindingNumber != null">
-				and detail.card_binding_number = #{cardBindingNumber}
+				and detail.card_binding_number  = #{cardBindingNumber}
 			</if>
 		</where>
 	</select>
@@ -454,12 +454,13 @@
 		from
 		    t_assemble_detail as detail 
 		    inner join m_batch_number as batch 
-		        on detail.batch_number = batch.batch_number
+		        on detail.batch_number  = batch.batch_number 
 		    left join t_batch_process_result_confirm as result
-		    	on batch.batch_number = result.batch_number and  result.ticket_info = detail.ticket_info
+		    	on batch.batch_number  = result.batch_number  
+		    	and  result.ticket_info  = detail.ticket_info 
 		<where>
 			<if test="batchNumber != null">
-				detail.batch_number = #{batchNumber}
+				detail.batch_number  = #{batchNumber}
 			</if>
 		</where>
 	 </select>
@@ -494,5 +495,18 @@
 			where card_binding_number = #{item}
 		</foreach>
 	 </update>
-	  
+
+
+	<select id="checkAssembleBinNumber"
+		parameterType="java.util.List" resultMap="AssembleDetailResultMap">
+		select
+			detail.card_binding_number
+		from
+			t_assemble_detail as detail
+			inner join m_batch_number as batch on detail.batch_number  = batch.batch_number 
+		where detail.card_binding_number  in 
+		<foreach collection="list" item="item"  open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
 </mapper>

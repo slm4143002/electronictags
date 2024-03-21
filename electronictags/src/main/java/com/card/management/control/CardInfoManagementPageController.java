@@ -162,46 +162,72 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 				f3List.add(cinfo.getCardInfo());
 			});
 			restInputPreparatoryCard.setCardInfoList(cardInfoList);
-			String response = baseStationSendApi.postRequest(restInputPreparatoryCard, TemplateEnum.PREPARATORY);
-			// 基站错误
-			if ("1".equals(response)) {
-				String eslErrorMessage = ErrorCodeConst.MSG9002.getMessage();
-				ObjectError error = new ObjectError("batchNumber", eslErrorMessage);
-				bindingResult.addError(error);
-				return "cardview";
-			}
-			// 拉取基站水墨屏信息
-			boolean isOver = true;
-			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
-			while (isOver) {
-				isOver = false;
-				eqList = baseStationSendApi.getEslResult(f3List);
-				if (CollectionUtils.isEmpty(eqList)) {
-					ObjectError error = new ObjectError("batchNumber", ErrorCodeConst.MSG9002.getMessage());
-					bindingResult.addError(error);
-					return "cardview";
-				}
-				for (int i = 0; i < eqList.size(); i++) {
-					if ((Integer) eqList.get(i).get("action") != 0 && (Integer) eqList.get(i).get("action") != 200) {
-						isOver = true;
+			
+			// check水墨屏是否被使用
+			List<PreparatoryDetailEntity> list1 = service.checkPreparatoryBinNumber(f3List);
+			List<AssembleDetailEntity> list2=  service.checkAssembleBinNumber(f3List);
+			StringBuilder sb0=new StringBuilder();
+			if (CollectionUtils.isEmpty(list1) && CollectionUtils.isEmpty(list2)) {
+			} else {
+				if (!CollectionUtils.isEmpty(list1)) {
+					for (int i=0;i<list1.size();i++) {
+						sb0.append(list1.get(i).getCardBindingNumber());
+						sb0.append("/");
 					}
 				}
-				Thread.sleep(500);
-
-			}
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < eqList.size(); i++) {
-				if ((Integer) eqList.get(i).get("action") != 0) {
-					sb.append(eqList.get(i).get("esl_code"));
-					sb.append("/");
+				if (!CollectionUtils.isEmpty(list2)) {
+					for (int i=0;i<list2.size();i++) {
+						sb0.append(list2.get(i).getCardBindingNumber());
+						sb0.append("/");
+					}
 				}
-			}
-
-			if (sb.length() != 0) {
-				ObjectError error = new ObjectError("batchNumber", sb.toString() + ErrorCodeConst.MSG9002.getMessage());
+				
+				String eslErrorMessage = ErrorCodeConst.MSG1007.getMessage();
+				ObjectError error = new ObjectError("batchNumber", sb0.toString() +  eslErrorMessage);
 				bindingResult.addError(error);
 				return "cardview";
 			}
+			
+//			String response = baseStationSendApi.postRequest(restInputPreparatoryCard, TemplateEnum.PREPARATORY);
+//			// 基站错误
+//			if ("1".equals(response)) {
+//				String eslErrorMessage = ErrorCodeConst.MSG9002.getMessage();
+//				ObjectError error = new ObjectError("batchNumber", eslErrorMessage);
+//				bindingResult.addError(error);
+//				return "cardview";
+//			}
+//			// 拉取基站水墨屏信息
+//			boolean isOver = true;
+//			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
+//			while (isOver) {
+//				isOver = false;
+//				eqList = baseStationSendApi.getEslResult(f3List);
+//				if (CollectionUtils.isEmpty(eqList)) {
+//					ObjectError error = new ObjectError("batchNumber", ErrorCodeConst.MSG9002.getMessage());
+//					bindingResult.addError(error);
+//					return "cardview";
+//				}
+//				for (int i = 0; i < eqList.size(); i++) {
+//					if ((Integer) eqList.get(i).get("action") != 0 && (Integer) eqList.get(i).get("action") != 200) {
+//						isOver = true;
+//					}
+//				}
+//				Thread.sleep(500);
+//
+//			}
+//			StringBuilder sb = new StringBuilder();
+//			for (int i = 0; i < eqList.size(); i++) {
+//				if ((Integer) eqList.get(i).get("action") != 0) {
+//					sb.append(eqList.get(i).get("esl_code"));
+//					sb.append("/");
+//				}
+//			}
+//
+//			if (sb.length() != 0) {
+//				ObjectError error = new ObjectError("batchNumber", sb.toString() + ErrorCodeConst.MSG9002.getMessage());
+//				bindingResult.addError(error);
+//				return "cardview";
+//			}
 
 			// 日期
 			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -210,18 +236,25 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 			// 筹备信息取得
 			List<CardInfo> cardInfo = cardView.getCardInfoList();
 			List<TPreparatoryDetail> preparatoryDetailInfoList = new ArrayList<>();
-			cardInfo.forEach(card -> {
+			for(int k=0;k<cardInfo.size();k++) {
 				TPreparatoryDetail entity = new TPreparatoryDetail();
+				if (StringUtils.isEmpty(cardInfo.get(k).getCardInfo()) && StringUtils.isEmpty(cardInfo.get(k).getCardCount())) {
+					continue;
+				} else if (StringUtils.isEmpty(cardInfo.get(k).getCardInfo()) || StringUtils.isEmpty(cardInfo.get(k).getCardCount())) {
+					ObjectError error = new ObjectError("batchNumber", ErrorCodeConst.MSG1008.getMessage());
+					bindingResult.addError(error);
+					return "cardview";
+				}
 				// 电子卡绑定信息
-				entity.setCardBindingNumber(card.getCardInfo());
+				entity.setCardBindingNumber(cardInfo.get(k).getCardInfo());
 				// 车数
-				entity.setCarTimes(Integer.parseInt(parseCarCount(card.getCardCount())));
+				entity.setCarTimes(Integer.parseInt(parseCarCount(cardInfo.get(k).getCardCount())));
 				// 批量号
 				entity.setBatchNumber(cardView.getBatchNumber());
 				entity.setCheckResult("1");
 				entity.setWriteDate(writeDate);
 				preparatoryDetailInfoList.add(entity);
-			});
+			}
 
 			service.createBatchNumberPreparatoryDetail(preparatoryDetailInfoList);
 		} catch (Exception e) {
@@ -244,11 +277,7 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 	 */
 	private String parseCarCount(String card) {
 		String[] cardArray = new String[2];
-		try {
-			cardArray = card.split("/");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		cardArray = card.split("/");
 		return cardArray[0];
 	}
 
