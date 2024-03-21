@@ -41,7 +41,10 @@ $(function() {
 					valign:"middle",
 					sortable: false,
 					colspan: 1,
-                    rowspan: 2
+                    rowspan: 2,
+                    formatter: function (value,row) {
+			            return  row.pieceTimes + "/" + value;
+			        }
 				},
 				{
 					field: 'writeDate',
@@ -90,7 +93,7 @@ $(function() {
                     rowspan: 2
 				},
 				{
-					field: 'cardBindiL/ONumber',
+					field: 'cardBindingNumber',
 					title: '电子卡片信息',
 					valign:"middle",
 					align: 'center',
@@ -100,50 +103,41 @@ $(function() {
 				}],
 				[{
 					field: 'assembleResult',
-					title: 'OK',
+					title: '状态',
 					align: 'center',
 					sortable: false,
-					formatter: function (row) {
-						if (row.assembleResult == "OK")
-			            return  "OK";
-			        }
-					
 				},{
 					field: 'assembleResultLo',
 					title: 'L/O',
 					align: 'center',
 					sortable: false,
-					formatter: function (row) {
-						if (row.assembleResult != "OK")
-			            return  "L/O";
-			        }
 				},{
-					field: 'assembleResult',
-					title: 'OK',
+					field: 'groundConnectionResult',
+					title: '状态',
 					align: 'center',
 					sortable: false,
 				},{
-					field: 'assembleResult',
+					field: 'groundConnectionResultLo',
 					title: 'L/O',
 					align: 'center',
 					sortable: false,
 				},{
-					field: 'assembleResult',
-					title: 'OK',
+					field: 'withstandVoltageResult',
+					title: '状态',
 					align: 'center',
 					sortable: false,
 				},{
-					field: 'assembleResult',
+					field: 'withstandVoltageResultLo',
 					title: 'L/O',
 					align: 'center',
 					sortable: false,
 				},{
-					field: 'assembleResult',
-					title: 'OK',
+					field: 'utResult',
+					title: '状态',
 					align: 'center',
 					sortable: false,
 				},{
-					field: 'assembleResult',
+					field: 'utResultLo',
 					title: 'L/O',
 					align: 'center',
 					sortable: false,

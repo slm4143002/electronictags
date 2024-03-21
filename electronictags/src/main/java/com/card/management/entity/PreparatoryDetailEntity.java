@@ -10,6 +10,7 @@ public class PreparatoryDetailEntity {
 	private String machineCategoryName;
 	private String machineCount;
 	private String carCount;
+	private String carTimes;
 	private String writeDate;
 	private String cardBindingNumber;
 	private String checkResult;

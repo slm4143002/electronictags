@@ -26,10 +26,13 @@ $(function() {
 					sortable: false,
 				},
 				{
-					field: 'carCount',
+					field: 'carTimes',
 					title: '车数',
 					align: 'center',
 					sortable: false,
+					formatter: function (value,row) {
+			            return  value + "/" + row.carCount ;
+			        }
 				},
 				{
 					field: 'writeDate',

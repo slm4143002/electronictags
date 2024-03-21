@@ -508,7 +508,12 @@ public class CardInfoManagementController {
 			// DB更新
 			TAssembleDetail tad = new TAssembleDetail();
 			tad.setCardBindingNumber(restInputGroundConnection.getCardInfo());
-			tad.setGroundConnectionResult(restInputGroundConnection.getCheckResult());
+			if (!EslEnum.GROUND_CONNECTION_RESULT.getResultOK().equals(restInputGroundConnection.getCheckResult())) {
+				tad.setGroundConnectionResultLo(restInputGroundConnection.getCheckResult());
+			}
+			if (EslEnum.GROUND_CONNECTION_RESULT.getResultOK().equals(restInputGroundConnection.getCheckResult())) {
+				tad.setGroundConnectionResult(restInputGroundConnection.getCheckResult());
+			}
 			service.updateAssemblDdetail(tad);
 
 			if (!EslEnum.GROUND_CONNECTION_RESULT.getResultOK().equals(restInputGroundConnection.getCheckResult())) {
@@ -641,7 +646,12 @@ public class CardInfoManagementController {
 			// DB更新
 			TAssembleDetail tad = new TAssembleDetail();
 			tad.setCardBindingNumber(restInputWithstandVoltage.getCardInfo());
-			tad.setWithstandVoltageResult(restInputWithstandVoltage.getCheckResult());
+			if (!EslEnum.WITHSTAND_VOLTAGE_RESULT.getResultOK().equals(restInputWithstandVoltage.getCheckResult())) {
+				tad.setWithstandVoltageResultLo(restInputWithstandVoltage.getCheckResult());
+			}
+			if (EslEnum.WITHSTAND_VOLTAGE_RESULT.getResultOK().equals(restInputWithstandVoltage.getCheckResult())) {
+				tad.setWithstandVoltageResult(restInputWithstandVoltage.getCheckResult());
+			}
 			service.updateAssemblDdetail(tad);
 
 			if (!EslEnum.WITHSTAND_VOLTAGE_RESULT.getResultOK().equals(restInputWithstandVoltage.getCheckResult())) {
@@ -778,6 +788,12 @@ public class CardInfoManagementController {
 			TAssembleDetail tad = new TAssembleDetail();
 			tad.setCardBindingNumber(restInputUt.getCardInfo());
 			tad.setUtResult(restInputUt.getCheckResult());
+			if (!EslEnum.UT_RESULT.getResultOK().equals(restInputUt.getCheckResult())) {
+				tad.setUtResult(restInputUt.getCheckResult());
+			}
+			if (EslEnum.UT_RESULT.getResultOK().equals(restInputUt.getCheckResult())) {
+				tad.setUtResult(restInputUt.getCheckResult());
+			}
 			tad.setTicketInfo(restInputUt.getTicketInfo());
 			service.updateAssemblDdetail(tad);
 			// 日期

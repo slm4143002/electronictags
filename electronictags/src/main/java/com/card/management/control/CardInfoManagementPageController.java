@@ -188,46 +188,46 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 				return "cardview";
 			}
 			
-//			String response = baseStationSendApi.postRequest(restInputPreparatoryCard, TemplateEnum.PREPARATORY);
-//			// 基站错误
-//			if ("1".equals(response)) {
-//				String eslErrorMessage = ErrorCodeConst.MSG9002.getMessage();
-//				ObjectError error = new ObjectError("batchNumber", eslErrorMessage);
-//				bindingResult.addError(error);
-//				return "cardview";
-//			}
-//			// 拉取基站水墨屏信息
-//			boolean isOver = true;
-//			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
-//			while (isOver) {
-//				isOver = false;
-//				eqList = baseStationSendApi.getEslResult(f3List);
-//				if (CollectionUtils.isEmpty(eqList)) {
-//					ObjectError error = new ObjectError("batchNumber", ErrorCodeConst.MSG9002.getMessage());
-//					bindingResult.addError(error);
-//					return "cardview";
-//				}
-//				for (int i = 0; i < eqList.size(); i++) {
-//					if ((Integer) eqList.get(i).get("action") != 0 && (Integer) eqList.get(i).get("action") != 200) {
-//						isOver = true;
-//					}
-//				}
-//				Thread.sleep(500);
-//
-//			}
-//			StringBuilder sb = new StringBuilder();
-//			for (int i = 0; i < eqList.size(); i++) {
-//				if ((Integer) eqList.get(i).get("action") != 0) {
-//					sb.append(eqList.get(i).get("esl_code"));
-//					sb.append("/");
-//				}
-//			}
-//
-//			if (sb.length() != 0) {
-//				ObjectError error = new ObjectError("batchNumber", sb.toString() + ErrorCodeConst.MSG9002.getMessage());
-//				bindingResult.addError(error);
-//				return "cardview";
-//			}
+			String response = baseStationSendApi.postRequest(restInputPreparatoryCard, TemplateEnum.PREPARATORY);
+			// 基站错误
+			if ("1".equals(response)) {
+				String eslErrorMessage = ErrorCodeConst.MSG9002.getMessage();
+				ObjectError error = new ObjectError("batchNumber", eslErrorMessage);
+				bindingResult.addError(error);
+				return "cardview";
+			}
+			// 拉取基站水墨屏信息
+			boolean isOver = true;
+			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
+			while (isOver) {
+				isOver = false;
+				eqList = baseStationSendApi.getEslResult(f3List);
+				if (CollectionUtils.isEmpty(eqList)) {
+					ObjectError error = new ObjectError("batchNumber", ErrorCodeConst.MSG9002.getMessage());
+					bindingResult.addError(error);
+					return "cardview";
+				}
+				for (int i = 0; i < eqList.size(); i++) {
+					if ((Integer) eqList.get(i).get("action") != 0 && (Integer) eqList.get(i).get("action") != 200) {
+						isOver = true;
+					}
+				}
+				Thread.sleep(500);
+
+			}
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < eqList.size(); i++) {
+				if ((Integer) eqList.get(i).get("action") != 0) {
+					sb.append(eqList.get(i).get("esl_code"));
+					sb.append("/");
+				}
+			}
+
+			if (sb.length() != 0) {
+				ObjectError error = new ObjectError("batchNumber", sb.toString() + ErrorCodeConst.MSG9002.getMessage());
+				bindingResult.addError(error);
+				return "cardview";
+			}
 
 			// 日期
 			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
