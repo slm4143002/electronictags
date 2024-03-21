@@ -253,7 +253,7 @@ public class CardInfoManagementController {
 				// 电子卡绑定信息
 				entity.setCardBindingNumber(cardInfo.get(k).getCardInfo());
 				// 车数
-				entity.setCarTimes(Integer.parseInt(cardInfo.get(k).getCardCount()));
+				entity.setCarTimes(Integer.parseInt(parseCarCount(cardInfo.get(k).getCardCount())));
 				// 批量号
 				entity.setBatchNumber(restInputPreparatoryCard.getBatchNumber());
 				entity.setCheckResult("1");
@@ -954,11 +954,7 @@ public class CardInfoManagementController {
 	 */
 	private String parseCarCount(String card) {
 		String[] cardArray = new String[2];
-		try {
-			cardArray = card.split("/");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		cardArray = card.split("/");
 		return cardArray[0];
 	}
 }
