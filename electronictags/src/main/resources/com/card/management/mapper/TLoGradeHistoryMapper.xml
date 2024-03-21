@@ -100,7 +100,7 @@
         when '4' then 'UT'
         else '-' 
         end as process_category, 
-        case when process_result then '完成' else '未完成' end as process_result, update_date, create_date
+        case when process_result then 'L/O品' else 'OK' end as process_result, update_date, create_date
   </sql>
   <select id="selectByExample" parameterType="com.card.management.entity.TLoGradeHistoryExample" resultMap="BaseResultMap">
     <!--

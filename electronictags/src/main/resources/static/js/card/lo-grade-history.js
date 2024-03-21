@@ -19,6 +19,12 @@ $(function() {
 					align: 'center',
 				},
 				{
+					field: 'cardBindingNumber',
+					title: '电子卡绑定信息',
+					sortable: false,
+					align: 'center',
+				},
+				{
 					field: 'machineCategoryName',
 					title: '机种名称',
 					sortable: false,

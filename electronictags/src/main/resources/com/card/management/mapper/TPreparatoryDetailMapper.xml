@@ -43,7 +43,7 @@
 		batch.batch_number,
 		batch.machine_category_name,
 		batch.machine_count,
-		batch.car_count
+		batch.car_count,
 		detail.write_date,
 		detail.car_times,
 		detail.card_binding_number,
@@ -58,6 +58,7 @@
 				detail.batch_number  = #{batchNumber}
 			</if>
 		</where>
+		order by write_date desc,batch.batch_number,detail.car_times 
 	</select>
 
 	<insert id="insertPreparatory" parameterType="java.util.List">

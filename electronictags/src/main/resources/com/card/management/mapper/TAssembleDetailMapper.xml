@@ -508,6 +508,7 @@
 				detail.batch_number  = #{batchNumber}
 			</if>
 		</where>
+		order by write_date desc,batch.batch_number,detail.piece_times 
 	 </select>
 	 <insert id="insertAssembleDetail" parameterType="java.util.List">
 		    insert into t_assemble_detail
