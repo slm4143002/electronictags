@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.util.StringUtils;
 
+import com.card.management.eleconst.ElectronictagsConst;
 import com.card.management.entity.AssembleDetailEntity;
 import com.card.management.entity.MBatchNumber;
 import com.card.management.entity.PreparatoryDetailEntity;
@@ -155,39 +157,41 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 			restInputPreparatoryCard.setMachineCount(cardView.getMachineCount());
 			restInputPreparatoryCard.setWriteDate(cardView.getWriteDate());
 			cardView.getCardInfoList().forEach(cinfo -> {
-				RestCardInfo restCardInfo = new RestCardInfo();
-				restCardInfo.setCardCount(cinfo.getCardCount());
-				restCardInfo.setCardInfo(cinfo.getCardInfo());
-				cardInfoList.add(restCardInfo);
-				f3List.add(cinfo.getCardInfo());
+				if (!StringUtils.isEmptyOrWhitespace(cinfo.getCardInfo())) {
+					RestCardInfo restCardInfo = new RestCardInfo();
+					restCardInfo.setCardCount(cinfo.getCardCount());
+					restCardInfo.setCardInfo(cinfo.getCardInfo());
+					cardInfoList.add(restCardInfo);
+					f3List.add(cinfo.getCardInfo());
+				}
 			});
 			restInputPreparatoryCard.setCardInfoList(cardInfoList);
-			
+
 			// check水墨屏是否被使用
 			List<PreparatoryDetailEntity> list1 = service.checkPreparatoryBinNumber(f3List);
-			List<AssembleDetailEntity> list2=  service.checkAssembleBinNumber(f3List);
-			StringBuilder sb0=new StringBuilder();
+			List<AssembleDetailEntity> list2 = service.checkAssembleBinNumber(f3List);
+			StringBuilder sb0 = new StringBuilder();
 			if (CollectionUtils.isEmpty(list1) && CollectionUtils.isEmpty(list2)) {
 			} else {
 				if (!CollectionUtils.isEmpty(list1)) {
-					for (int i=0;i<list1.size();i++) {
+					for (int i = 0; i < list1.size(); i++) {
 						sb0.append(list1.get(i).getCardBindingNumber());
 						sb0.append("/");
 					}
 				}
 				if (!CollectionUtils.isEmpty(list2)) {
-					for (int i=0;i<list2.size();i++) {
+					for (int i = 0; i < list2.size(); i++) {
 						sb0.append(list2.get(i).getCardBindingNumber());
 						sb0.append("/");
 					}
 				}
-				
+
 				String eslErrorMessage = ErrorCodeConst.MSG1007.getMessage();
-				ObjectError error = new ObjectError("batchNumber", sb0.toString() +  eslErrorMessage);
+				ObjectError error = new ObjectError("batchNumber", sb0.toString() + eslErrorMessage);
 				bindingResult.addError(error);
 				return "cardview";
 			}
-			
+
 			String response = baseStationSendApi.postRequest(restInputPreparatoryCard, TemplateEnum.PREPARATORY);
 			// 基站错误
 			if ("1".equals(response)) {
@@ -199,6 +203,7 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 			// 拉取基站水墨屏信息
 			boolean isOver = true;
 			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
+			long startTime = System.nanoTime();
 			while (isOver) {
 				isOver = false;
 				eqList = baseStationSendApi.getEslResult(f3List);
@@ -212,7 +217,17 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 						isOver = true;
 					}
 				}
-				Thread.sleep(500);
+				// 检查是否已经超过了指定的最大执行时间
+				long timeL = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime);
+				System.out.print(timeL);
+	            if (timeL > ElectronictagsConst.MAX_EXECUTION_TIME) {
+	            	String eslErrorMessage = ErrorCodeConst.MSG9003.getMessage();
+					ObjectError error = new ObjectError("batchNumber", eslErrorMessage);
+					bindingResult.addError(error);
+					return "cardview";
+	            }
+	            
+	            Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
 			}
 			StringBuilder sb = new StringBuilder();
@@ -236,11 +251,13 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 			// 筹备信息取得
 			List<CardInfo> cardInfo = cardView.getCardInfoList();
 			List<TPreparatoryDetail> preparatoryDetailInfoList = new ArrayList<>();
-			for(int k=0;k<cardInfo.size();k++) {
+			for (int k = 0; k < cardInfo.size(); k++) {
 				TPreparatoryDetail entity = new TPreparatoryDetail();
-				if (StringUtils.isEmpty(cardInfo.get(k).getCardInfo()) && StringUtils.isEmpty(cardInfo.get(k).getCardCount())) {
+				if (StringUtils.isEmpty(cardInfo.get(k).getCardInfo())
+						&& StringUtils.isEmpty(cardInfo.get(k).getCardCount())) {
 					continue;
-				} else if (StringUtils.isEmpty(cardInfo.get(k).getCardInfo()) || StringUtils.isEmpty(cardInfo.get(k).getCardCount())) {
+				} else if (StringUtils.isEmpty(cardInfo.get(k).getCardInfo())
+						|| StringUtils.isEmpty(cardInfo.get(k).getCardCount())) {
 					ObjectError error = new ObjectError("batchNumber", ErrorCodeConst.MSG1008.getMessage());
 					bindingResult.addError(error);
 					return "cardview";
@@ -400,7 +417,7 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 				}
 			});
 			restInputClearCard.setCardInfoList(cardInfoList);
-			 String response = baseStationSendApi.postRequest(restInputClearCard, TemplateEnum.CLEAR);
+			String response = baseStationSendApi.postRequest(restInputClearCard, TemplateEnum.CLEAR);
 			// 基站错误
 			if ("1".equals(response)) {
 				String eslErrorMessage = ErrorCodeConst.MSG9002.getMessage();
@@ -412,6 +429,8 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 			boolean isOver = true;
 			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
 
+			// 记录开始时间
+			long startTime = System.nanoTime();
 			while (isOver) {
 				isOver = false;
 				eqList = baseStationSendApi.getEslResult(f3List);
@@ -425,7 +444,14 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 						isOver = true;
 					}
 				}
-				Thread.sleep(500);
+				// 检查是否已经超过了指定的最大执行时间
+	            if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+	            	String eslErrorMessage = ErrorCodeConst.MSG9003.getMessage();
+					ObjectError error = new ObjectError("batchNumber", eslErrorMessage);
+					bindingResult.addError(error);
+					return "cardview";
+	            }
+				Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
 			}
 			StringBuilder sb = new StringBuilder();

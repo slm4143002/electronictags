@@ -11,8 +11,8 @@ public class BaseStationRestTemplate {
 	@Bean
 	public RestTemplate restTemplate() {
 		SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-		factory.setConnectTimeout(10000); // 设置连接超时时间
-		factory.setReadTimeout(10000); // 设置读取超时时间
+		factory.setConnectTimeout(60000); // 设置连接超时时间
+		factory.setReadTimeout(60000); // 设置读取超时时间
 		RestTemplate rt = new RestTemplate();
 		rt.setErrorHandler(new EslResponseErrorHandler());
 		rt.setRequestFactory(factory);

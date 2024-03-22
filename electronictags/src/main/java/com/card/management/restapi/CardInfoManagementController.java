@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -67,6 +68,9 @@ public class CardInfoManagementController {
 
 	@Autowired
 	public BaseStationSendApiService baseStationSendApi;
+	
+	@Autowired
+	public PropertiesModel pmodel;
 
 	// 筹备批量查询
 	@GetMapping("/batchnumber")
@@ -203,6 +207,8 @@ public class CardInfoManagementController {
 			// 拉取基站水墨屏信息
 			boolean isOver = true;
 			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
+			// 记录开始时间
+			long startTime = System.nanoTime();
 			while (isOver) {
 				isOver = false;
 				eqList = baseStationSendApi.getEslResult(f3List);
@@ -216,9 +222,17 @@ public class CardInfoManagementController {
 						isOver = true;
 					}
 				}
-				Thread.sleep(500);
+				// 检查是否已经超过了指定的最大执行时间
+	            if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+	            	return Map.of("result", ApiResponse.error(Status.ERROR,
+							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
+									ErrorCodeConst.MSG9003.getMessage())));
+	            }
+	            
+				Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
 			}
+			
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < eqList.size(); i++) {
 				if ((Integer) eqList.get(i).get("action") != 0) {
@@ -347,6 +361,8 @@ public class CardInfoManagementController {
 			// 拉取基站水墨屏信息
 			boolean isOver = true;
 			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
+			// 记录开始时间
+			long startTime = System.nanoTime();
 			while (isOver) {
 				isOver = false;
 				eqList = baseStationSendApi
@@ -361,7 +377,14 @@ public class CardInfoManagementController {
 						isOver = true;
 					}
 				}
-				Thread.sleep(500);
+				// 检查是否已经超过了指定的最大执行时间
+	            if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+	            	return Map.of("result", ApiResponse.error(Status.ERROR,
+							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
+									ErrorCodeConst.MSG9003.getMessage())));
+	            }
+	            
+				Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
 			}
 			StringBuilder sb = new StringBuilder();
@@ -474,6 +497,8 @@ public class CardInfoManagementController {
 			// 拉取基站水墨屏信息
 			boolean isOver = true;
 			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
+			// 记录开始时间
+			long startTime = System.nanoTime();
 			while (isOver) {
 				isOver = false;
 				eqList = baseStationSendApi
@@ -488,7 +513,14 @@ public class CardInfoManagementController {
 						isOver = true;
 					}
 				}
-				Thread.sleep(500);
+				// 检查是否已经超过了指定的最大执行时间
+	            if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+	            	return Map.of("result", ApiResponse.error(Status.ERROR,
+							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
+									ErrorCodeConst.MSG9003.getMessage())));
+	            }
+	            
+				Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
 			}
 			StringBuilder sb = new StringBuilder();
@@ -612,6 +644,8 @@ public class CardInfoManagementController {
 			// 拉取基站水墨屏信息
 			boolean isOver = true;
 			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
+			// 记录开始时间
+			long startTime = System.nanoTime();
 			while (isOver) {
 				isOver = false;
 				eqList = baseStationSendApi
@@ -626,7 +660,14 @@ public class CardInfoManagementController {
 						isOver = true;
 					}
 				}
-				Thread.sleep(500);
+				// 检查是否已经超过了指定的最大执行时间
+	            if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+	            	return Map.of("result", ApiResponse.error(Status.ERROR,
+							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
+									ErrorCodeConst.MSG9003.getMessage())));
+	            }
+	            
+				Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
 			}
 			StringBuilder sb = new StringBuilder();
@@ -753,6 +794,8 @@ public class CardInfoManagementController {
 			// 拉取基站水墨屏信息
 			boolean isOver = true;
 			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
+			// 记录开始时间
+			long startTime = System.nanoTime();
 			while (isOver) {
 				isOver = false;
 				eqList = baseStationSendApi
@@ -767,7 +810,14 @@ public class CardInfoManagementController {
 						isOver = true;
 					}
 				}
-				Thread.sleep(500);
+				// 检查是否已经超过了指定的最大执行时间
+	            if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+	            	return Map.of("result", ApiResponse.error(Status.ERROR,
+							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
+									ErrorCodeConst.MSG9003.getMessage())));
+	            }
+	            
+				Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
 			}
 			StringBuilder sb = new StringBuilder();
@@ -789,7 +839,7 @@ public class CardInfoManagementController {
 			tad.setCardBindingNumber(restInputUt.getCardInfo());
 			tad.setUtResult(restInputUt.getCheckResult());
 			if (!EslEnum.UT_RESULT.getResultOK().equals(restInputUt.getCheckResult())) {
-				tad.setUtResult(restInputUt.getCheckResult());
+				tad.setUtResultLo(restInputUt.getCheckResult());
 			}
 			if (EslEnum.UT_RESULT.getResultOK().equals(restInputUt.getCheckResult())) {
 				tad.setUtResult(restInputUt.getCheckResult());
@@ -820,6 +870,9 @@ public class CardInfoManagementController {
 				if (!CollectionUtils.isEmpty(batchProcessResultConfirmList)) {
 					if (mbn.getMachineCount() == (batchProcessResultConfirmList.size() + 1)) {
 						isOverResult = true;
+					} else if (mbn.getMachineCount() < (batchProcessResultConfirmList.size() + 1)) {
+						return Map.of("result", ApiResponse.error(Status.ERROR,
+								new ErrorResponse(ErrorCodeConst.MSG1009.getCode(), ErrorCodeConst.MSG1009.getMessage())));
 					}
 				}
 
@@ -828,7 +881,7 @@ public class CardInfoManagementController {
 				bprc.setBatchNumber(mbn.getBatchNumber());
 				bprc.setCarTimes(tadl.getPieceTimes());
 				bprc.setTicketInfo(restInputUt.getTicketInfo());
-				bprc.setCheckResult("1");
+				//bprc.setCheckResult("1");
 				bprc.setWriteDate(mbn.getWriteDate());
 				bprc.setProjectCategory("2");
 				bprc.setUpdateDate(new Date());
@@ -838,6 +891,10 @@ public class CardInfoManagementController {
 				BatchProccessResult bp = new BatchProccessResult();
 				bp.setBatchNumber(tadl.getBatchNumber());
 				if (isOverResult) {
+					TBatchProcessResultConfirm confirm = new TBatchProcessResultConfirm();
+					confirm.setCheckResult("1");
+					confirm.setBatchNumber(mbn.getBatchNumber());
+					service.updateBatchProcessResultConfirm(confirm);
 					return Map.of("result", ApiResponse.success(Status.SUCCESS, bp));
 				} else {
 					return Map.of("result", ApiResponse.success(Status.SUCCESS,
@@ -899,6 +956,8 @@ public class CardInfoManagementController {
 			boolean isOver = true;
 			List<java.util.LinkedHashMap> eqList = new ArrayList<java.util.LinkedHashMap>();
 
+			// 记录开始时间
+			long startTime = System.nanoTime();
 			while (isOver) {
 				isOver = false;
 				eqList = baseStationSendApi.getEslResult(f3List);
@@ -911,7 +970,14 @@ public class CardInfoManagementController {
 						isOver = true;
 					}
 				}
-				Thread.sleep(500);
+				// 检查是否已经超过了指定的最大执行时间
+	            if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+	            	return Map.of("result", ApiResponse.error(Status.ERROR,
+							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
+									ErrorCodeConst.MSG9003.getMessage())));
+	            }
+	            
+				Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
 			}
 			StringBuilder sb = new StringBuilder();

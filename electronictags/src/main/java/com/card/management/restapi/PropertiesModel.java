@@ -21,5 +21,7 @@ public class PropertiesModel {
 	private String templateIdClear;
 	private String sign;
 	private String isBase64;
+	private int maxWaitTime;
+	private int requestTime;
 
 }

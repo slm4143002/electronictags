@@ -4,6 +4,22 @@ $(function() {
 	$(document).on("keypress", "input:not(.allow_submit)", function(event) {
 		return event.which !== 13;
 	});
+	
+	if ($("#carCount").val() != "") {
+		let num = Number($("#carCount").val()) +1;
+		let carCounts = Number($("#carCount").val())
+		for (k=num; k <= 10; k++) {
+			$("#cardInfo" + k).removeAttr('placeholder');
+			$("#cardInfo" + k).prop("disabled", true);
+			$("#cardcount" + k).prop("disabled", true);
+		}
+		
+		for (var i = 1; i <= carCounts; i++) {
+			$("#cardcount" + i).val(i + "/" + carCounts);
+		}
+	}
+						
+						
 	document.addEventListener('keyup', function() {
 		$("#cardInfo1").keyup(function(event) {
 			if (event.which == 13) {

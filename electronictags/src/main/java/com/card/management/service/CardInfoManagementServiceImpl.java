@@ -189,6 +189,7 @@ public class CardInfoManagementServiceImpl implements CardInfoManagementService 
 	}
 
 	@Override
+	@Transactional
 	public void insertBatchProcessResultConfirm(TBatchProcessResultConfirm batchProcessResultConfirm) {
 		tBatchProcessResultConfirmMapper.insert(batchProcessResultConfirm);
 	}
@@ -203,10 +204,11 @@ public class CardInfoManagementServiceImpl implements CardInfoManagementService 
 	}
 
 	@Override
+	@Transactional
 	public void updateBatchProcessResultConfirm(TBatchProcessResultConfirm history) {
 		TBatchProcessResultConfirmExample example = new TBatchProcessResultConfirmExample();
 		example.createCriteria().andBatchNumberEqualTo(history.getBatchNumber());
-		tBatchProcessResultConfirmMapper.updateByExample(history, example);
+		tBatchProcessResultConfirmMapper.updateByExampleSelective(history, example);
 		
 	}
 
