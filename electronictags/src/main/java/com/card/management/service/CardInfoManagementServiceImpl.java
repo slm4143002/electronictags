@@ -224,6 +224,15 @@ public class CardInfoManagementServiceImpl implements CardInfoManagementService 
 		return list;
 	}
 
+	@Override
+	public List<TAssembleDetail> getBatchNumberByTicketInfo(String ticketInfo) {
+		TAssembleDetailExample example = new TAssembleDetailExample();
+		example.createCriteria().andTicketInfoEqualTo(ticketInfo);
+		List<TAssembleDetail> list = tAssembleDetailMapper.selectByExample(example);
+		
+		return list;
+	}
+
 	
 
 }

@@ -759,7 +759,13 @@ public class CardInfoManagementController {
 				return Map.of("result", ApiResponse.error(Status.ERROR,
 						new ErrorResponse(ErrorCodeConst.MSG1004.getCode(), ErrorCodeConst.MSG1004.getMessage())));
 			}
-
+			// check小票信息是否被使用
+			List<TAssembleDetail> listTicktInfo = service.getBatchNumberByTicketInfo(restInputUt.getTicketInfo());
+			if (!CollectionUtils.isEmpty(listTicktInfo)) {
+				return Map.of("result", ApiResponse.error(Status.ERROR,
+						new ErrorResponse(ErrorCodeConst.MSG1010.getCode(), ErrorCodeConst.MSG1010.getMessage())));
+			}
+			
 			MBatchNumber mbn = service.getCards(tadl.getBatchNumber());
 			RestInputAssembleCard restInputAssembleCard = new RestInputAssembleCard();
 			RestCardInfo restCardInfo = new RestCardInfo();

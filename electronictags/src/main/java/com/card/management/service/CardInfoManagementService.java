@@ -60,6 +60,7 @@ public interface CardInfoManagementService {
 	public void clearAssembleDetail(List<String> clearAssembleDetailList);
 	
 	public List<TAssembleDetail> getBatchNumberBybingNumber(String cardBindingNumber);
+	public List<TAssembleDetail> getBatchNumberByTicketInfo(String ticketInfo);
 	
 	
 	// 处理结果登录
