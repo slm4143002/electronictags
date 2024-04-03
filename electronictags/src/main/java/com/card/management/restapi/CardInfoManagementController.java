@@ -48,6 +48,7 @@ import com.card.management.restapi.pojo.RestInputGroundConnection;
 import com.card.management.restapi.pojo.RestInputPreparatoryCard;
 import com.card.management.restapi.pojo.RestInputUt;
 import com.card.management.restapi.pojo.RestInputWithstandVoltage;
+import com.card.management.restapi.pojo.RestOutputClearCard;
 import com.card.management.service.CardInfoManagementService;
 
 import jakarta.validation.Valid;
@@ -68,7 +69,7 @@ public class CardInfoManagementController {
 
 	@Autowired
 	public BaseStationSendApiService baseStationSendApi;
-	
+
 	@Autowired
 	public PropertiesModel pmodel;
 
@@ -223,16 +224,17 @@ public class CardInfoManagementController {
 					}
 				}
 				// 检查是否已经超过了指定的最大执行时间
-	            if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
-	            	return Map.of("result", ApiResponse.error(Status.ERROR,
+				if (TimeUnit.NANOSECONDS
+						.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+					return Map.of("result", ApiResponse.error(Status.ERROR,
 							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
 									ErrorCodeConst.MSG9003.getMessage())));
-	            }
-	            
+				}
+
 				Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
 			}
-			
+
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < eqList.size(); i++) {
 				if ((Integer) eqList.get(i).get("action") != 0) {
@@ -378,12 +380,13 @@ public class CardInfoManagementController {
 					}
 				}
 				// 检查是否已经超过了指定的最大执行时间
-	            if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
-	            	return Map.of("result", ApiResponse.error(Status.ERROR,
+				if (TimeUnit.NANOSECONDS
+						.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+					return Map.of("result", ApiResponse.error(Status.ERROR,
 							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
 									ErrorCodeConst.MSG9003.getMessage())));
-	            }
-	            
+				}
+
 				Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
 			}
@@ -514,12 +517,13 @@ public class CardInfoManagementController {
 					}
 				}
 				// 检查是否已经超过了指定的最大执行时间
-	            if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
-	            	return Map.of("result", ApiResponse.error(Status.ERROR,
+				if (TimeUnit.NANOSECONDS
+						.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+					return Map.of("result", ApiResponse.error(Status.ERROR,
 							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
 									ErrorCodeConst.MSG9003.getMessage())));
-	            }
-	            
+				}
+
 				Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
 			}
@@ -661,12 +665,13 @@ public class CardInfoManagementController {
 					}
 				}
 				// 检查是否已经超过了指定的最大执行时间
-	            if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
-	            	return Map.of("result", ApiResponse.error(Status.ERROR,
+				if (TimeUnit.NANOSECONDS
+						.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+					return Map.of("result", ApiResponse.error(Status.ERROR,
 							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
 									ErrorCodeConst.MSG9003.getMessage())));
-	            }
-	            
+				}
+
 				Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
 			}
@@ -765,7 +770,7 @@ public class CardInfoManagementController {
 				return Map.of("result", ApiResponse.error(Status.ERROR,
 						new ErrorResponse(ErrorCodeConst.MSG1010.getCode(), ErrorCodeConst.MSG1010.getMessage())));
 			}
-			
+
 			MBatchNumber mbn = service.getCards(tadl.getBatchNumber());
 			RestInputAssembleCard restInputAssembleCard = new RestInputAssembleCard();
 			RestCardInfo restCardInfo = new RestCardInfo();
@@ -817,12 +822,13 @@ public class CardInfoManagementController {
 					}
 				}
 				// 检查是否已经超过了指定的最大执行时间
-	            if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
-	            	return Map.of("result", ApiResponse.error(Status.ERROR,
+				if (TimeUnit.NANOSECONDS
+						.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+					return Map.of("result", ApiResponse.error(Status.ERROR,
 							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
 									ErrorCodeConst.MSG9003.getMessage())));
-	            }
-	            
+				}
+
 				Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
 			}
@@ -878,7 +884,8 @@ public class CardInfoManagementController {
 						isOverResult = true;
 					} else if (mbn.getMachineCount() < (batchProcessResultConfirmList.size() + 1)) {
 						return Map.of("result", ApiResponse.error(Status.ERROR,
-								new ErrorResponse(ErrorCodeConst.MSG1009.getCode(), ErrorCodeConst.MSG1009.getMessage())));
+								new ErrorResponse(ErrorCodeConst.MSG1009.getCode(),
+										ErrorCodeConst.MSG1009.getMessage())));
 					}
 				}
 
@@ -964,6 +971,7 @@ public class CardInfoManagementController {
 
 			// 记录开始时间
 			long startTime = System.nanoTime();
+			//Map<> map;
 			while (isOver) {
 				isOver = false;
 				eqList = baseStationSendApi.getEslResult(f3List);
@@ -977,37 +985,41 @@ public class CardInfoManagementController {
 					}
 				}
 				// 检查是否已经超过了指定的最大执行时间
-	            if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
-	            	return Map.of("result", ApiResponse.error(Status.ERROR,
-							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
-									ErrorCodeConst.MSG9003.getMessage())));
-	            }
-	            
+				if (TimeUnit.NANOSECONDS
+						.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+					break;
+				}
+
 				Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
 			}
+			// 基站推送
+			RestOutputClearCard rOutputClearCard = new RestOutputClearCard();
+			List<RestCardInfo> rcinfoList = new ArrayList<RestCardInfo>();
+			rOutputClearCard.setCardInfoList(rcinfoList);
+			List<String> successList = new ArrayList<String>();
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < eqList.size(); i++) {
 				if ((Integer) eqList.get(i).get("action") != 0) {
 					sb.append(eqList.get(i).get("esl_code"));
 					sb.append("/");
+					RestCardInfo rcinfo = new RestCardInfo();
+					rcinfo.setCardInfo((String) eqList.get(i).get("esl_code"));
+					rcinfoList.add(rcinfo);
+				} else {
+					successList.add((String) eqList.get(i).get("esl_code"));
 				}
 			}
 
-			if (sb.length() != 0) {
-				return Map.of("result", ApiResponse.error(Status.ERROR,
-						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
-								sb.toString() + ErrorCodeConst.MSG9002.getMessage())));
+			// 解绑卡片更新
+			if (!CollectionUtils.isEmpty(successList)) {
+				// 组装解除
+				service.clearAssembleDetail(successList);
+				// 筹备解除
+				service.clearPreparatoryDetail(successList);
 			}
 
-			// 解绑卡片更新
-			// 组装解除
-			service.clearAssembleDetail(f3List);
-			// 筹备解除
-			service.clearPreparatoryDetail(f3List);
-
-			return Map.of("result", ApiResponse.success(Status.SUCCESS,
-					new ErrorResponse(ErrorCodeConst.MSG6001.getCode(), ErrorCodeConst.MSG6001.getMessage())));
+			return Map.of("result", ApiResponse.success(Status.SUCCESS, rOutputClearCard));
 
 		} catch (Exception e) {
 			e.printStackTrace();
