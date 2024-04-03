@@ -220,14 +220,14 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 				// 检查是否已经超过了指定的最大执行时间
 				long timeL = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime);
 				System.out.print(timeL);
-	            if (timeL > ElectronictagsConst.MAX_EXECUTION_TIME) {
-	            	String eslErrorMessage = ErrorCodeConst.MSG9003.getMessage();
+				if (timeL > ElectronictagsConst.MAX_EXECUTION_TIME) {
+					String eslErrorMessage = ErrorCodeConst.MSG9003.getMessage();
 					ObjectError error = new ObjectError("batchNumber", eslErrorMessage);
 					bindingResult.addError(error);
 					return "cardview";
-	            }
-	            
-	            Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
+				}
+
+				Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
 			}
 			StringBuilder sb = new StringBuilder();
@@ -445,44 +445,56 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 					}
 				}
 				// 检查是否已经超过了指定的最大执行时间
-	            if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
-	            	String eslErrorMessage = ErrorCodeConst.MSG9003.getMessage();
+				if (TimeUnit.NANOSECONDS
+						.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+					String eslErrorMessage = ErrorCodeConst.MSG9003.getMessage();
 					ObjectError error = new ObjectError("batchNumber", eslErrorMessage);
 					bindingResult.addError(error);
-					return "cardview";
-	            }
+					//return "cardview";
+				}
 				Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
 			}
+			List<CardInfo> cardInfoListOutput = new ArrayList<CardInfo>();
+			List<String> successList = new ArrayList<String>();
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < eqList.size(); i++) {
 				if ((Integer) eqList.get(i).get("action") != 0) {
 					sb.append(eqList.get(i).get("esl_code"));
 					sb.append("/");
+
+					CardInfo cinfo = new CardInfo();
+					cinfo.setCardInfo((String) eqList.get(i).get("esl_code"));
+					cardInfoListOutput.add(cinfo);
+				} else {
+					successList.add((String) eqList.get(i).get("esl_code"));
 				}
 			}
 
-			if (sb.length() != 0) {
-				ObjectError error = new ObjectError("infoMessage", sb.toString() + ErrorCodeConst.MSG9002.getMessage());
-				bindingResult.addError(error);
-				return "clearcard";
+			// 解绑卡片更新
+			if (!CollectionUtils.isEmpty(successList)) {
+				// 组装解除
+				service.clearAssembleDetail(successList);
+				// 筹备解除
+				service.clearPreparatoryDetail(successList);
 			}
 
-			// 解绑卡片更新
-			// 组装解除
-			service.clearAssembleDetail(f3List);
-			// 筹备解除
-			service.clearPreparatoryDetail(f3List);
+			CardClearView card = new CardClearView();
+
+			if (CollectionUtils.isEmpty(cardInfoListOutput)) {
+				String infoMessage = messageSource.getMessage("clearCardMessage", null,
+						Locale.CHINA);
+				card.setInfoMessage(infoMessage);
+			} else {
+				card.setCardInfoList(cardInfoListOutput);
+				card.setErrorMessage(ErrorCodeConst.MSG9003.getMessage());
+			}
+			model.addAttribute("cardView", card);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "clearcard";
 		}
-		CardClearView card = new CardClearView();
-		String infoMessage = messageSource.getMessage("clearCardMessage", null,
-				Locale.CHINA);
-		card.setInfoMessage(infoMessage);
-		model.addAttribute("cardView", card);
 
 		return "clearcard";
 	}

@@ -13,5 +13,6 @@ public class CardClearView {
 
 	private List<CardInfo> cardInfoList;
 	private String infoMessage;
+	private String errorMessage;
 
 }
