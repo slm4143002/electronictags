@@ -447,10 +447,7 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 				// 检查是否已经超过了指定的最大执行时间
 				if (TimeUnit.NANOSECONDS
 						.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
-					String eslErrorMessage = ErrorCodeConst.MSG9003.getMessage();
-					ObjectError error = new ObjectError("batchNumber", eslErrorMessage);
-					bindingResult.addError(error);
-					//return "cardview";
+					break;
 				}
 				Thread.sleep(ElectronictagsConst.WAIT_TIME_INTERVAL);
 
