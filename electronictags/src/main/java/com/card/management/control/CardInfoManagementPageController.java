@@ -38,6 +38,7 @@ import com.card.management.entity.TPreparatoryDetail;
 import com.card.management.entity.TWarningMessage;
 import com.card.management.restapi.BaseStationSendApiService;
 import com.card.management.restapi.ErrorCodeConst;
+import com.card.management.restapi.PropertiesModel;
 import com.card.management.restapi.TemplateEnum;
 import com.card.management.restapi.pojo.RestCardInfo;
 import com.card.management.restapi.pojo.RestInputClearCard;
@@ -64,6 +65,9 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 	@Autowired
 	public BaseStationSendApiService baseStationSendApi;
 
+	@Autowired
+	public PropertiesModel pmodel;
+	
 	/**
 	 * login画面
 	 * @return
@@ -220,7 +224,7 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 				// 检查是否已经超过了指定的最大执行时间
 				long timeL = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime);
 				System.out.print(timeL);
-				if (timeL > ElectronictagsConst.MAX_EXECUTION_TIME) {
+				if (timeL > pmodel.getMaxWaitTime()) {
 					String eslErrorMessage = ErrorCodeConst.MSG9003.getMessage();
 					ObjectError error = new ObjectError("batchNumber", eslErrorMessage);
 					bindingResult.addError(error);
@@ -241,6 +245,7 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 			if (sb.length() != 0) {
 				ObjectError error = new ObjectError("batchNumber", sb.toString() + ErrorCodeConst.MSG9002.getMessage());
 				bindingResult.addError(error);
+				Thread.sleep(pmodel.getRequestTime()*1000);
 				return "cardview";
 			}
 
@@ -484,7 +489,9 @@ public class CardInfoManagementPageController implements WebMvcConfigurer {
 				card.setInfoMessage(infoMessage);
 			} else {
 				card.setCardInfoList(cardInfoListOutput);
-				card.setErrorMessage(ErrorCodeConst.MSG9003.getMessage());
+				card.setErrorMessage(ErrorCodeConst.MSG9004.getMessage());
+				// 存在基站错误，增加等待时间
+				Thread.sleep(pmodel.getRequestTime()*1000);
 			}
 			model.addAttribute("cardView", card);
 

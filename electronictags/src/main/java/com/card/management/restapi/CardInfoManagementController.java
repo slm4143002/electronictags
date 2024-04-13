@@ -225,7 +225,7 @@ public class CardInfoManagementController {
 				}
 				// 检查是否已经超过了指定的最大执行时间
 				if (TimeUnit.NANOSECONDS
-						.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+						.toSeconds(System.nanoTime() - startTime) > pmodel.getMaxWaitTime()) {
 					return Map.of("result", ApiResponse.error(Status.ERROR,
 							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
 									ErrorCodeConst.MSG9003.getMessage())));
@@ -244,6 +244,8 @@ public class CardInfoManagementController {
 			}
 
 			if (sb.length() != 0) {
+				// 基站出错，增加等待时间
+				Thread.sleep(pmodel.getRequestTime()*1000);
 				return Map.of("result", ApiResponse.error(Status.ERROR,
 						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
 								sb.toString() + ErrorCodeConst.MSG9002.getMessage())));
@@ -381,7 +383,7 @@ public class CardInfoManagementController {
 				}
 				// 检查是否已经超过了指定的最大执行时间
 				if (TimeUnit.NANOSECONDS
-						.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+						.toSeconds(System.nanoTime() - startTime) > pmodel.getMaxWaitTime()) {
 					return Map.of("result", ApiResponse.error(Status.ERROR,
 							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
 									ErrorCodeConst.MSG9003.getMessage())));
@@ -399,6 +401,7 @@ public class CardInfoManagementController {
 			}
 
 			if (sb.length() != 0) {
+				Thread.sleep(pmodel.getRequestTime()*1000);
 				return Map.of("result", ApiResponse.error(Status.ERROR,
 						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
 								sb.toString() + ErrorCodeConst.MSG9002.getMessage())));
@@ -518,7 +521,7 @@ public class CardInfoManagementController {
 				}
 				// 检查是否已经超过了指定的最大执行时间
 				if (TimeUnit.NANOSECONDS
-						.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+						.toSeconds(System.nanoTime() - startTime) > pmodel.getMaxWaitTime()) {
 					return Map.of("result", ApiResponse.error(Status.ERROR,
 							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
 									ErrorCodeConst.MSG9003.getMessage())));
@@ -536,6 +539,8 @@ public class CardInfoManagementController {
 			}
 
 			if (sb.length() != 0) {
+				// 基站出错，增加等待时间
+				Thread.sleep(pmodel.getRequestTime()*1000);
 				return Map.of("result", ApiResponse.error(Status.ERROR,
 						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
 								sb.toString() + ErrorCodeConst.MSG9002.getMessage())));
@@ -666,7 +671,7 @@ public class CardInfoManagementController {
 				}
 				// 检查是否已经超过了指定的最大执行时间
 				if (TimeUnit.NANOSECONDS
-						.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+						.toSeconds(System.nanoTime() - startTime) > pmodel.getMaxWaitTime()) {
 					return Map.of("result", ApiResponse.error(Status.ERROR,
 							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
 									ErrorCodeConst.MSG9003.getMessage())));
@@ -684,6 +689,8 @@ public class CardInfoManagementController {
 			}
 
 			if (sb.length() != 0) {
+				// 基站出错，增加等待时间
+				Thread.sleep(pmodel.getRequestTime()*1000);
 				return Map.of("result", ApiResponse.error(Status.ERROR,
 						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
 								sb.toString() + ErrorCodeConst.MSG9002.getMessage())));
@@ -823,7 +830,7 @@ public class CardInfoManagementController {
 				}
 				// 检查是否已经超过了指定的最大执行时间
 				if (TimeUnit.NANOSECONDS
-						.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+						.toSeconds(System.nanoTime() - startTime) > pmodel.getMaxWaitTime()) {
 					return Map.of("result", ApiResponse.error(Status.ERROR,
 							new ErrorResponse(ErrorCodeConst.MSG9003.getCode(),
 									ErrorCodeConst.MSG9003.getMessage())));
@@ -841,6 +848,8 @@ public class CardInfoManagementController {
 			}
 
 			if (sb.length() != 0) {
+				// 基站出错，增加等待时间
+				Thread.sleep(pmodel.getRequestTime()*1000);
 				return Map.of("result", ApiResponse.error(Status.ERROR,
 						new ErrorResponse(ErrorCodeConst.MSG9002.getCode(),
 								sb.toString() + ErrorCodeConst.MSG9002.getMessage())));
@@ -986,7 +995,7 @@ public class CardInfoManagementController {
 				}
 				// 检查是否已经超过了指定的最大执行时间
 				if (TimeUnit.NANOSECONDS
-						.toSeconds(System.nanoTime() - startTime) > ElectronictagsConst.MAX_EXECUTION_TIME) {
+						.toSeconds(System.nanoTime() - startTime) > pmodel.getMaxWaitTime()) {
 					break;
 				}
 
@@ -1019,6 +1028,10 @@ public class CardInfoManagementController {
 				service.clearPreparatoryDetail(successList);
 			}
 
+			// 存在基站写入错误，增加等待时间
+			if (!CollectionUtils.isEmpty(rcinfoList)) {
+				Thread.sleep(pmodel.getRequestTime()*1000);
+			}
 			return Map.of("result", ApiResponse.success(Status.SUCCESS, rOutputClearCard));
 
 		} catch (Exception e) {
