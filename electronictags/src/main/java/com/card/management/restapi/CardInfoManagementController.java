@@ -864,8 +864,9 @@ public class CardInfoManagementController {
 			}
 			if (EslEnum.UT_RESULT.getResultOK().equals(restInputUt.getCheckResult())) {
 				tad.setUtResult(restInputUt.getCheckResult());
+				tad.setTicketInfo(restInputUt.getTicketInfo());
 			}
-			tad.setTicketInfo(restInputUt.getTicketInfo());
+			
 			service.updateAssemblDdetail(tad);
 			// 日期
 			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
