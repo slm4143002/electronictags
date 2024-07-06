@@ -14,6 +14,7 @@ public interface TAssembleDetailMapper {
 	List<AssembleDetailEntity> selectAssembleDetailBybatchNumber(String batchNumber);
 
 	long selectAssembleDetailCount(@Param("batchNumber")String batchNumber,@Param("cardBindingNumber")String cardBindingNumber);
+	long getDetailCount(@Param("batchNumber")String batchNumber);
 	
 	long insertAssembleDetail(List<TAssembleDetail> assembleDetailList);
 	

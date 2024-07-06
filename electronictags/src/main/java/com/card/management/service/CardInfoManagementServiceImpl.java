@@ -99,6 +99,12 @@ public class CardInfoManagementServiceImpl implements CardInfoManagementService 
 		long count = this.tAssembleDetailMapper.selectAssembleDetailCount(batchNumber,cardBindingNumber);
 		return (int) count;
 	}
+	
+	@Override
+	public int getDetailCount(String batchNumber) {
+		long count = this.tAssembleDetailMapper.getDetailCount(batchNumber);
+		return (int) count;
+	}
 
 	@Override
 	public List<AssembleDetailEntity> getAssembleDetailBybatchNumber(String batchNumber) {

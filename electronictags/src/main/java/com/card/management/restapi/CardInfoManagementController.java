@@ -110,7 +110,7 @@ public class CardInfoManagementController {
 			bn.setBatchNumber(mbn.getBatchNumber());
 			bn.setMachineCount(mbn.getMachineCount());
 			bn.setMachineCategoryName(mbn.getMachineCategoryName());
-			int detailcount = service.getAssembleDetailCount(batchNumber, null);
+			int detailcount = service.getDetailCount(batchNumber);
 			if (detailcount == 0) {
 				bn.setMachineNum(1);
 			} else {

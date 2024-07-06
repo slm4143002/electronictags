@@ -33,6 +33,7 @@ public interface CardInfoManagementService {
 
 	// 取得组装明细详细信息
 	public int getAssembleDetailCount(String batchNumber,String cardBindingNumber);
+	public int getDetailCount(String batchNumber);
 
 	public List<AssembleDetailEntity> getAssembleDetailBybatchNumber(String batchNumber);
 

@@ -493,6 +493,27 @@
 			</if>
 		</where>
 	</select>
+	<select id="getDetailCount"
+		parameterType="String" resultType="java.lang.Long">
+		select
+            case when count(1) = 0 then 0
+            else min(detail.piece_times)
+            end count
+        from
+            t_assemble_detail as detail 
+            inner join m_batch_number as batch 
+                on detail.batch_number = batch.batch_number 
+                    and batch.write_date = detail.write_date
+                    and exists (select * from t_assemble_detail temp  where temp.piece_times = 1 and temp.batch_number = detail.batch_number)
+            left join t_assemble_detail as missDetail on missDetail.batch_number = detail.batch_number 
+            and detail.piece_times+1 =  missDetail.piece_times
+		<where>
+		    missDetail.piece_times is null 
+			<if test="batchNumber != null">
+				and detail.batch_number  = #{batchNumber}
+			</if>
+		</where>
+	</select>
 	<select id="selectAssembleDetailBybatchNumber"
 		parameterType="String" resultMap="AssembleDetailResultMap">
 		select
